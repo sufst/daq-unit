@@ -1,1 +1,1 @@
-# daq_unit
+# daq-unit
