@@ -1,0 +1,6 @@
+All source files and headers in this directory have to be modified to fit our design.
+Sensors we need:
+Accelerometer,
+Wheel Speed,
+Ride Height,
+DP. //Piotr
