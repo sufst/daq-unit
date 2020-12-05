@@ -1,8 +1,6 @@
 /*************************************************************************//**
-* @file controller.cpp
-* @brief Start point of SUFST controller firmware
-* @note
-* @author nrs1g15@soton.ac.uk
+* @file front_arduino.ino
+* @brief Start point of SUFST controller firmware for front Arduino
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -24,18 +22,12 @@
 
 void setup()
 {
-    /*
-     * Initialise the system
-     */
-
+    //Initialise the system
     sys__manager__init();
 }
 
 void loop()
 {
-    /*
-     * Loop the system
-     */
-
+    // Loop the system
     sys__manager__process();
 }

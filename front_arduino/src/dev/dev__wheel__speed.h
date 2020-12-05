@@ -1,8 +1,6 @@
 /*************************************************************************//**
-* @file dev__can__mcp2515.h
-* @brief CAN device layer implementing the MCP2515 CAN Controller
-* @note
-* @author nrs1g15@soton.ac.uk
+* @file dev__wheel__speed.h
+* @brief device layer for analgog read of wheel speed
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -19,21 +17,20 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef DEV__MCP2515_H
-#define DEV__MCP2515_H
+/*----------------------------------------------------------------------------
+  @brief
+----------------------------------------------------------------------------*/
+#ifndef CONTROLLER_V2_DEV__WHEEL__SPEED_H
+#define CONTROLLER_V2_DEV__WHEEL__SPEED_H
+
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
 #include "Arduino.h"
 
-#include "../srv/srv__comms.h"
-#include "dev__can__mcp2515_regs.h"
-#include "../utils/util__cir__buff.h"
-
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
-
 
 /*----------------------------------------------------------------------------
   manifest constants
@@ -42,71 +39,11 @@
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
-typedef void (*dev__can__mcp2515__isr_handler)(void);
-
-typedef union
-{
-    uint32_t events;
-    struct
-    {
-        union
-        {
-            struct
-            {
-                uint8_t tx : 1;
-                uint8_t rx: 1;
-                uint8_t : 6;
-            };
-            uint8_t events;
-        } infoEvents;
-
-        union
-        {
-            struct
-            {
-                uint8_t tx : 1;
-                uint8_t rx : 1;
-                uint8_t : 6;
-            };
-            uint8_t events;
-        } warningEvents;
-
-        union
-        {
-            struct
-            {
-                struct
-                {
-                    uint8_t msgErr : 1;
-                    uint8_t : 7;
-                } errorEventsL;
-
-                dev__can__mcp2515__eflg_t errorEventsH;
-            };
-            uint16_t events;
-        } errorEvents;
-    };
-} dev__can__mcp2515__events_t;
-
-typedef enum
-{
-    DEV__CAN__MCP2515__OK,
-    DEV__CAN__MCP2515__ERR_BUS,
-    DEV__CAN__MCP2515__ERR,
-    DEV__CAN__MCP2515__TX_FULL,
-    DEV__CAN__MCP2515__RX_EMPTY
-} dev__can__mcp2515__state_t;
-
 typedef struct
 {
-    uint8_t csPin;
-    uint8_t intPin;
-    util__cir__buff_t txBuff;
-    util__cir__buff_t rxBuff;
-    dev__can__mcp2515__isr_handler handler;
-    bool enabled;
-} dev__can__mcp2515__obj_t;
-
+    uint8_t pin;
+    uint32_t conversionRate;
+} dev__wheel__speed__obj_t;
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
@@ -114,19 +51,32 @@ typedef struct
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-dev__can__mcp2515__state_t dev__can__mcp2515__init(dev__can__mcp2515__obj_t *obj);
+void dev__wheel__speed__init(dev__wheel__speed__obj_t* obj);
 
-dev__can__mcp2515__events_t dev__can__mcp2515__get_errors(dev__can__mcp2515__obj_t *obj);
-
-dev__can__mcp2515__state_t dev__can__mcp2515__write(dev__can__mcp2515__obj_t *obj, srv__comms__can_tx_message_t *msg);
-
-dev__can__mcp2515__state_t dev__can__mcp2515__read(dev__can__mcp2515__obj_t *obj, srv__comms__can_rx_message_t *msg);
-/*----------------------------------------------------------------------------s
+/*----------------------------------------------------------------------------
   inlines
 ----------------------------------------------------------------------------*/
+/*************************************************************************//**
+* @brief Read the wheel speed pin voltage in micro volts
+* @param dev__wheel__speed__obj_t *obj Wheel speed device object
+* @return uint32_t Voltage in uV
+* @note
+*****************************************************************************/
+inline uint32_t dev__wheel_speed__read_uv(dev__wheel__speed__obj_t *obj)
+{
+    //uint32_t adcRaw = analogRead(obj->pin);
+    //return (adcRaw * obj->conversionRate);
+
+    uint32_t dummyBrake = 1;
+    return dummyBrake;
+}
 
 /*----------------------------------------------------------------------------
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif //DEV__MCP2515_H
+#endif // CONTROLLER_V2_DEV__WHEEL__SPEED_H
+
+/*----------------------------------------------------------------------------
+  End of file
+----------------------------------------------------------------------------*/

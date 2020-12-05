@@ -1,8 +1,6 @@
 /*************************************************************************//**
-* @file dev__software__timer.cpp
-* @brief Software timer device layer
-* @note
-* @author nrs1g15@soton.ac.uk
+* @file dev__accelerometer.h
+* @brief device layer for accelerometer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,14 +14,24 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-/*----------------------------------------------------------------------------
-  include files
-----------------------------------------------------------------------------*/
-#include "dev__timers.h"
 
-#include "../hw/hw__timer.h"
+/*----------------------------------------------------------------------------
+  @brief
+----------------------------------------------------------------------------*/
+#ifndef CONTROLLER_V2_DEV__ACCELEROMETER_H
+#define CONTROLLER_V2_DEV__ACCELEROMETER_H
+
+/*----------------------------------------------------------------------------
+  nested include files
+----------------------------------------------------------------------------*/
+#include "Arduino.h"
+
+/*----------------------------------------------------------------------------
+  macros
+----------------------------------------------------------------------------*/
+
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
@@ -33,64 +41,69 @@
 ----------------------------------------------------------------------------*/
 typedef struct
 {
-    dev__software__timer__callback handler;
-} dev__software__timer__obj_t;
+    uint8_t pinX; // X-axis
+    uint8_t pinY; // Y-axis
+    uint8_t pinZ; // Z-axis
+    uint32_t conversionRate;
+} dev__accelerometer__obj_t;
+/*----------------------------------------------------------------------------
+  extern variables
+----------------------------------------------------------------------------*/
+
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-static void dev__software__timer__hw_timer_handler();
-/*----------------------------------------------------------------------------
-  macros
-----------------------------------------------------------------------------*/
+void dev__accelerometer__init(dev__accelerometer__obj_t* obj);
 
 /*----------------------------------------------------------------------------
-  global variables
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  static variables
-----------------------------------------------------------------------------*/
-static dev__software__timer__obj_t dev__software__timer__obj;
-/*----------------------------------------------------------------------------
-  public functions
+  inlines
 ----------------------------------------------------------------------------*/
 /*************************************************************************//**
-* @brief Initialises hardware timer 1 at 1000hz for software timers
-* @param None
-* @return None
-* @note All software timers have to be a multiple of 2ms intervals
-*****************************************************************************/
-void dev__software__timer__init()
-{
-    hw__timer__init(HW__TIMER__TIMER_1, DEV__SOFTWARE__TIMER__HW_1MS_OCRNA,
-                                  dev__software__timer__hw_timer_handler);
-}
-
-/*************************************************************************//**
-* @brief Register service layer interrupt handler
-* @param dev__software__timer__callback handler Callback
-* @return None
+* @brief Read the x-axis of accelerometer pin voltage in micro volts
+* @param dev__accelerometer__obj_t *obj Accelerometer device object
+* @return uint32_t Voltage in uV
 * @note
 *****************************************************************************/
-void dev__software__timer__register_handler(dev__software__timer__callback handler)
+inline uint32_t dev__accelerometer_x__read_uv(dev__accelerometer__obj_t *obj)
 {
-    dev__software__timer__obj.handler = handler;
+    //uint32_t adcRaw = analogRead(obj->pin);
+    //return (adcRaw * obj->conversionRate);
+
+    uint32_t adcRawX = analogRead(obj->pinX); 
+    return(adcRawX * obj->conversionRate);
 }
-/*----------------------------------------------------------------------------
-  private functions
-----------------------------------------------------------------------------*/
+
 /*************************************************************************//**
-* @brief Hardware layer interrupt handler function
-* @param None
-* @return None
+* @brief Read the y-axis of accelerometer pin voltage in micro volts
+* @param dev__accelerometer__obj_t *obj Accelerometer device object
+* @return uint32_t Voltage in uV
 * @note
 *****************************************************************************/
-static void dev__software__timer__hw_timer_handler()
+inline uint32_t dev__accelerometer_y__read_uv(dev__accelerometer__obj_t *obj)
 {
-    dev__software__timer__obj.handler();
+    uint32_t adcRawY = analogRead(obj->pinY); 
+    return(adcRawY * obj->conversionRate);
 }
+
+/*************************************************************************//**
+* @brief Read the z-axis of accelerometer pin voltage in micro volts
+* @param dev__accelerometer__obj_t *obj Accelerometer device object
+* @return uint32_t Voltage in uV
+* @note
+*****************************************************************************/
+inline uint32_t dev__accelerometer_z__read_uv(dev__accelerometer__obj_t *obj)
+{
+    uint32_t adcRawZ = analogRead(obj->pinZ); 
+    return(adcRawZ * obj->conversionRate);
+}
+
+
+/*----------------------------------------------------------------------------
+  compile time checks
+----------------------------------------------------------------------------*/
+
+#endif // CONTROLLER_V2_DEV__ACCELEROMETER_H
+
 /*----------------------------------------------------------------------------
   End of file
 ----------------------------------------------------------------------------*/
-
-

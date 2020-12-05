@@ -1,8 +1,6 @@
 /*************************************************************************//**
 * @file dev__ride__height.h
 * @brief Ride-height sensor device layer
-* @note
-* @author nrs1g15@soton.ac.uk
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -67,8 +65,10 @@ void dev__ride__height__init(dev__ride__height__obj_t *obj);
 *****************************************************************************/
 inline uint32_t dev__ride__height__read_uv(dev__ride__height__obj_t *obj)
 {
-    uint32_t adcRaw = analogRead(obj->pin);
-    return (adcRaw * obj->conversionRate);
+    //uint32_t adcRaw = analogRead(obj->pin);
+    //return (adcRaw * obj->conversionRate);
+    uint32_t adcRaw = 0;
+    return adcRaw;
 }
 /*----------------------------------------------------------------------------
   compile time checks
@@ -79,4 +79,3 @@ inline uint32_t dev__ride__height__read_uv(dev__ride__height__obj_t *obj)
 /*----------------------------------------------------------------------------
   End of file
 ----------------------------------------------------------------------------*/
-

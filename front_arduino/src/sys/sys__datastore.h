@@ -1,8 +1,6 @@
 /*************************************************************************//**
 * @file sys__datastore.h
 * @brief System datastore
-* @note
-* @author nrs1g15@soton.ac.uk
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -29,7 +27,7 @@
 #include "Arduino.h"
 
 #include "sys__manager.h"
-#include "../srv/srv__software__timer.h"
+
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -99,167 +97,51 @@ typedef enum
     SYS__DATASTORE__TAG_RIDE_HEIGHT
 } sys__datastore__tags_t;
 
-typedef enum
-{
-    SYS__DATASTORE__STATUS_TAG_CONTROLLER = 0x01,
-    SYS__DATASTORE__STATUS_TAG_SD_CARD,
-    SYS__DATASTORE__STATUS_TAG_S60_ECU
-} sys__datastore__status_tags_t;
 
+
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
 typedef struct
 {
     uint8_t tag;
+    uint32_t dataX;
+    uint32_t dataY;
+    uint32_t dataZ;
     uint32_t timestamp;
-    uint16_t data;
-#if SYS__MANAGER__WIRELESS_ENABLED
-    bool wirelessDaq;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-} sys__datastore__ecu_save_t;
-
-#if SYS__MANAGER__EVO_SCANN_SENSORS_ENABLED
-
-typedef struct
-{
-    uint8_t tag;
-    uint32_t timestamp;
-    uint32_t data;
-#if SYS__MANAGER__WIRELESS_ENABLED
-    bool wirelessDaq;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-} sys__datastore__evo_scanner_save_t;
-
-#endif // SYS__MANAGER__EVO_SCANN_SENSORS_ENABLED
-
-#if SYS__MANAGER__LAP_TIMER_ENABLED
-
-typedef struct
-{
-    uint32_t timestamp;
-#if SYS__MANAGER__WIRELESS_ENABLED
-    bool wirelessDaq;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-    uint8_t debounceS;
-} sys__datastore__laptimer_save_t;
-
-#endif // SYS__MANAGER__LAP_TIMER_ENABLED
-
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-
-typedef struct
-{
-    uint8_t tag;
-    uint32_t timestamp;
-    uint32_t data;
-#if SYS__MANAGER__WIRELESS_ENABLED
-    bool wirelessDaq;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-} sys__datastore__damper_pots_save_t;
-
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__YAW_SENSOR_ENABLED
-
-typedef struct
-{
-    uint8_t tag;
-    uint32_t timestamp;
-    int32_t data;
-#if SYS__MANAGER__WIRELESS_ENABLED
-    bool wirelessDaq;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-} sys__datastore__yaw_sensor_save_t;
-
-#endif // SYS__MANAGER__YAW_SENSOR_ENABLED
-
-#if SYS__MANAGER__WIRELESS_ENABLED
-
-typedef struct
-{
-    uint8_t wirelessDaqRefreshMs;
-    srv__software__timer__handle timerHandle;
-} sys__datastore__wireless_save_t;
-
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-
-#if SYS__MANAGER__FCHMPPLC_ENABLED
-
-typedef struct
-{
-    uint8_t tag;
-    uint16_t data;
-    uint32_t timestamp;
-#if SYS__MANAGER__WIRELESS_ENABLED
-    bool wirelessDaq;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-} sys__datastore__fchmpplc_save_t;
-
-#endif // SYS__MANAGER__FCHMPPLC_ENABLED
-
-#if SYS__MANAGER__BRAKE_PRESS_ENABLED
-
-typedef struct
-{
-    uint8_t tag;
-    uint32_t data;
-    uint32_t timestamp;
-#if SYS__MANAGER__WIRELESS_ENABLED
-    bool wirelessDaq;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-} sys__datastore__brake_press_save_t;
-
-#endif // SYS__MANAGER__BRAKE_PRESS_ENABLED
+} sys__datastore__accelerometer_save_t;
+#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
 typedef struct
 {
     uint8_t tag;
-    uint32_t timestamp;
     uint32_t data;
-#if SYS__MANAGER__WIRELESS_ENABLED
-    bool wirelessDaq;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
+    uint32_t timestamp;
 } sys__datastore__ride_height_save_t;
-
 #endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
+
+#if SYS__MANAGER__WHEEL_SPEED_ENABLED
+typedef struct
+{
+    uint8_t tag;
+    uint32_t data;
+    uint32_t timestamp;
+} sys__datastore__wheel_speed_save_t;
+#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
 
 typedef struct
 {
-    sys__datastore__ecu_save_t ecu[SYS__MANAGER__ECU_SENSOR_CNT];
-#if SYS__MANAGER__LAP_TIMER_ENABLED
-    sys__datastore__laptimer_save_t laptimer;
-#endif // SYS__MANAGER__LAP_TIMER_ENABLED
 
-#if SYS__MANAGER__EVO_SCANN_SENSORS_ENABLED
-    sys__datastore__evo_scanner_save_t evo[SYS__MANAGER__EVO_SCANN_SENSORS_ATTACHED_AMT];
-#endif // SYS__MANAGER__EVO_SCANN_SENSORS_ENABLED
-
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-    sys__datastore__damper_pots_save_t damperPots[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT];
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__WIRELESS_ENABLED
-    sys__datastore__wireless_save_t wireless;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-
-#if SYS__MANAGER__YAW_SENSOR_ENABLED
-    sys__datastore__yaw_sensor_save_t yaw;
-#endif // SYS__MANAGER__WIRELESS_ENABLED
-
-#if SYS__MANAGER__FCHMPPLC_ENABLED
-    sys__datastore__fchmpplc_save_t fchmpplc;
-#endif // SYS__MANAGER__FCHMPPLC_ENABLED
-
-#if SYS__MANAGER__BRAKE_PRESS_ENABLED
-    sys__datastore__brake_press_save_t brakePressure;
-#endif // SYS__MANAGER__BRAKE_PRESS_ENABLED
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
+    sys__datastore__accelerometer_save_t accelerometer;
+#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
     sys__datastore__ride_height_save_t rideHeight;
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
+#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
 
-    uint8_t status[SYS__DATASTORE__STATUS_TAG_AMOUNT + 1];
-    uint32_t lastEcuMessageSeenTimeMs;
+#if SYS__MANAGER__WHEEL_SPEED_ENABLED
+    sys__datastore__wheel_speed_save_t wheelSpeed;
+#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
 
 } sys__datastore_t;
 /*----------------------------------------------------------------------------

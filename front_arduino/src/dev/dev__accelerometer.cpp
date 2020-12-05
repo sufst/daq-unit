@@ -1,8 +1,6 @@
 /*************************************************************************//**
-* @file dev__yaw__sensor.cpp
-* @brief Yaw sensor device layer
-* @note
-* @author nrs1g15@soton.ac.uk
+* @file dev__accelerometer.h
+* @brief device layer for linear 0-5V brake pressure sensor
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,18 +14,18 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-#include "dev__yaw__sensor.h"
 
 /*----------------------------------------------------------------------------
   include files
 ----------------------------------------------------------------------------*/
+#include "dev__accelerometer.h"
 
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
-#define DEV__YAW__SENSOR__ADC_CONVERSION_UV 488
+#define DEV__ACCELEROMETER__ADC_CONVERSION_UV 488
 
 /*----------------------------------------------------------------------------
   type definitions
@@ -53,32 +51,21 @@
   public functions
 ----------------------------------------------------------------------------*/
 /*************************************************************************//**
-* @brief Initialise the yaw sensor input
-* @param dev__yaw__sensor__obj_t *obj yaw sensor device object
+* @brief Initialise the accelerometer
+* @param dev__accelerometer__obj_t* obj Accelerometer device object
 * @return None
 * @note
 *****************************************************************************/
-void dev__yaw__sensor__init(dev__yaw__sensor__obj_t *obj)
+void dev__accelerometer__init(dev__accelerometer__obj_t* obj)
 {
-    pinMode(obj->pin, INPUT_PULLUP);
+    pinMode(obj->pinX, INPUT_PULLUP);
+    pinMode(obj->pinY, INPUT_PULLUP);
+    pinMode(obj->pinZ, INPUT_PULLUP);
+    obj->conversionRate = DEV__ACCELEROMETER__ADC_CONVERSION_UV;
 }
-
-/*************************************************************************//**
-* @brief Read the yaw sensor pin voltage in micro volts
-* @param dev__yaw__sensor__obj_t *obj Yaw sensor device object
-* @return None
-* @note
-*****************************************************************************/
-uint32_t dev__yaw__sensor__read_pot_uv(dev__yaw__sensor__obj_t *obj)
-{
-    uint32_t adcRaw = analogRead(obj->pin);
-    return (adcRaw * DEV__YAW__SENSOR__ADC_CONVERSION_UV);
-}
-
 /*----------------------------------------------------------------------------
   private functions
 ----------------------------------------------------------------------------*/
-
 
 /*----------------------------------------------------------------------------
   End of file

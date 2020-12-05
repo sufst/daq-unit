@@ -1,8 +1,6 @@
 /*************************************************************************//**
 * @file dev__ride__height.cpp
 * @brief Ride height sensor device layer
-* @note
-* @author nrs1g15@soton.ac.uk
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -70,5 +68,4 @@ void dev__ride__height__init(dev__ride__height__obj_t *obj)
 /*----------------------------------------------------------------------------
   End of file
 ----------------------------------------------------------------------------*/
-
 
