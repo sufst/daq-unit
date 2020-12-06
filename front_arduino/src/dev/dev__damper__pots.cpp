@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file sys__manager.cpp
-* @brief System manager 
+* @file dev__damper__pots.cpp
+* @brief Damper pots device layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,12 @@
 /*----------------------------------------------------------------------------
   include files
 ----------------------------------------------------------------------------*/
-#include "sys__manager.h"
-#include "../srv/srv__daq.h"
-
-#include "sys__datastore.h"
-
+#include "dev__damper__pots.h"
 
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
+#define DEV__DAMPER__POTS__ADC_CONVERSION_UV 488
 
 /*----------------------------------------------------------------------------
   type definitions
@@ -37,7 +34,6 @@
   prototypes
 ----------------------------------------------------------------------------*/
 
-
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -45,7 +41,6 @@
 /*----------------------------------------------------------------------------
   global variables
 ----------------------------------------------------------------------------*/
-sys__datastore_t sys__datastore;
 
 /*----------------------------------------------------------------------------
   static variables
@@ -54,50 +49,23 @@ sys__datastore_t sys__datastore;
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
-
 /*************************************************************************//**
-* @brief Initialises the system
-* @param None
+* @brief Initialise the damper pots pins
+* @param dev__damper__pots__obj_t *obj Damper pot device object
 * @return None
 * @note
 *****************************************************************************/
-void sys__manager__init()
+void dev__damper__pots__init(dev__damper__pots__obj_t *obj)
 {
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-    uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_1_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_2_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_3_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_4_PIN};
-    srv__daq__damper_pots_init(SYS__MANAGER__DAMPER_POTS_POLL_MS, dampersPins);
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__ACCELEROMETER_ENABLED
-    srv__daq__accelerometer_init(SYS__MANAGER__ACCELEROMETER_X_PIN, 
-                                 SYS__MANAGER__ACCELEROMETER_Y_PIN, 
-                                 SYS__MANAGER__ACCELEROMETER_Z_PIN);
-#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
-
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-    srv__daq__ride_height_init(SYS__MANAGER__RIDE_HEIGHT_PIN);
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-#if SYS__MANAGER__WHEEL_SPEED_ENABLED
-    srv__daq__wheel_speed_init(SYS__MANAGER__WHEEL_SPEED_PIN);
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
-
-    Serial.println("SYSTEM INIT FINISHED");
+    pinMode(obj->pin, INPUT_PULLUP);
+    obj->conversionRate = DEV__DAMPER__POTS__ADC_CONVERSION_UV;
 }
 
-/*************************************************************************//**
-* @brief services loops
-* @param None
-* @return None
-* @note
-*****************************************************************************/
-void sys__manager__process()
-{
-    srv__daq__process(sys__datastore);
-}
 /*----------------------------------------------------------------------------
   private functions
 ----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------
+  End of file
+----------------------------------------------------------------------------*/
+

@@ -24,6 +24,10 @@
 #include "../sys/sys__manager.h"
 #include "../sys/sys__datastore.h"
 
+#if SYS__MANAGER__DAMPER_POTS_ENABLED
+#include "../dev/dev__damper__pots.h"
+#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
+
 #if SYS__MANAGER__ACCELEROMETER_ENABLED
 #include "../dev/dev__accelerometer.h"
 #endif // SYS__MANAGER__ACCELEROMETER_ENABLED
@@ -60,6 +64,9 @@
 /*----------------------------------------------------------------------------
   static variables
 ----------------------------------------------------------------------------*/
+#if SYS__MANAGER__DAMPER_POTS_ENABLED
+static dev__damper__pots__obj_t dev__damper__pots__obj[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT];
+#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
 #if SYS__MANAGER__ACCELEROMETER_ENABLED
 static dev__accelerometer__obj_t dev__accelerometer__obj;
@@ -76,9 +83,33 @@ static dev__wheel__speed__obj_t dev__wheel__speed__obj;
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
-
+#if SYS__MANAGER__DAMPER_POTS_ENABLED
+/*************************************************************************//**
+* @brief Initialise damper pots
+* @param uint16_t ms Damper pots daq frequency
+* @param uint8_t *pins Damper pot pins
+* @return None
+* @note
+*****************************************************************************/
+void srv__daq__damper_pots_init(uint16_t ms, uint8_t *pins)
+{
+    for (uint8_t i = 0; i < SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT; i++)
+    {
+        dev__damper__pots__obj[i].pin = pins[i];
+        dev__damper__pots__init(&dev__damper__pots__obj[i]);
+    }
+}
+#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
 #if SYS__MANAGER__ACCELEROMETER_ENABLED
+/*************************************************************************//**
+* @brief Initialise accelerometer
+* @param uint8_t pinX Accelerometer x-axis pin
+* @param uint8_t pinY Accelerometer y-axis pin
+* @param uint8_t pinZ Accelerometer z-axis pin
+* @return None
+* @note
+*****************************************************************************/
 void srv__daq__accelerometer_init(uint8_t pinX, uint8_t pinY, uint8_t pinZ)
 {
     dev__accelerometer__obj.pinX = pinX;
@@ -90,6 +121,12 @@ void srv__daq__accelerometer_init(uint8_t pinX, uint8_t pinY, uint8_t pinZ)
 
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
+/*************************************************************************//**
+* @brief Initialise ride height sensor
+* @param uint8_t pins Ride height pin
+* @return None
+* @note
+*****************************************************************************/
 void srv__daq__ride_height_init(uint8_t pin)
 {
     dev__ride__height__obj.pin = pin;
@@ -99,6 +136,12 @@ void srv__daq__ride_height_init(uint8_t pin)
 
 
 #if SYS__MANAGER__WHEEL_SPEED_ENABLED
+/*************************************************************************//**
+* @brief Initialise wheel speed sensor
+* @param uint8_t pins Wheel speed pin
+* @return None
+* @note
+*****************************************************************************/
 void srv__daq__wheel_speed_init(uint8_t pin)
 {
     dev__wheel__speed__obj.pin = pin;

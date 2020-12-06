@@ -55,6 +55,9 @@ typedef enum
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
+#if SYS__MANAGER__DAMPER_POTS_ENABLED
+void srv__daq__damper_pots_init(uint16_t ms, uint8_t *pins);
+#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
 #if SYS__MANAGER__ACCELEROMETER_ENABLED
 void srv__daq__accelerometer_init(uint8_t pinX, uint8_t pinY, uint8_t pinZ);

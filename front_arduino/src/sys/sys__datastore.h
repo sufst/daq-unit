@@ -97,7 +97,14 @@ typedef enum
     SYS__DATASTORE__TAG_RIDE_HEIGHT
 } sys__datastore__tags_t;
 
-
+#if SYS__MANAGER__DAMPER_POTS_ENABLED
+typedef struct
+{
+    uint8_t tag;
+    uint32_t timestamp;
+    uint32_t data;
+} sys__datastore__damper_pots_save_t;
+#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
 #if SYS__MANAGER__ACCELEROMETER_ENABLED
 typedef struct
@@ -130,6 +137,9 @@ typedef struct
 
 typedef struct
 {
+#if SYS__MANAGER__DAMPER_POTS_ENABLED
+    sys__datastore__damper_pots_save_t damperPots[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT];
+#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
 #if SYS__MANAGER__ACCELEROMETER_ENABLED
     sys__datastore__accelerometer_save_t accelerometer;

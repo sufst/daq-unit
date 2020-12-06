@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file sys__manager.cpp
-* @brief System manager 
+* @file dev__damper__pots.h
+* @brief Damper pots device layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -17,13 +17,19 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
 /*----------------------------------------------------------------------------
-  include files
+  @brief
 ----------------------------------------------------------------------------*/
-#include "sys__manager.h"
-#include "../srv/srv__daq.h"
 
-#include "sys__datastore.h"
+#ifndef CONTROLLER_V2_DEV__DAMPER__POTS_H
+#define CONTROLLER_V2_DEV__DAMPER__POTS_H
+/*----------------------------------------------------------------------------
+  nested include files
+----------------------------------------------------------------------------*/
+#include "Arduino.h"
 
+/*----------------------------------------------------------------------------
+  macros
+----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
   manifest constants
@@ -32,72 +38,42 @@
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
+typedef struct
+{
+    uint8_t pin;
+    uint32_t conversionRate;
+} dev__damper__pots__obj_t;
+
+/*----------------------------------------------------------------------------
+  extern variables
+----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
 
+void dev__damper__pots__init(dev__damper__pots__obj_t *obj);
 
 /*----------------------------------------------------------------------------
-  macros
+  inlines
 ----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  global variables
-----------------------------------------------------------------------------*/
-sys__datastore_t sys__datastore;
-
-/*----------------------------------------------------------------------------
-  static variables
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  public functions
-----------------------------------------------------------------------------*/
-
 /*************************************************************************//**
-* @brief Initialises the system
-* @param None
+* @brief Read the damper pot pin voltage in micro volts
+* @param dev__damper__pots__obj_t *obj Damper pot device object
 * @return None
 * @note
 *****************************************************************************/
-void sys__manager__init()
+inline uint32_t dev__damper__pots__read_pot_uv(dev__damper__pots__obj_t *obj)
 {
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-    uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_1_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_2_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_3_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_4_PIN};
-    srv__daq__damper_pots_init(SYS__MANAGER__DAMPER_POTS_POLL_MS, dampersPins);
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__ACCELEROMETER_ENABLED
-    srv__daq__accelerometer_init(SYS__MANAGER__ACCELEROMETER_X_PIN, 
-                                 SYS__MANAGER__ACCELEROMETER_Y_PIN, 
-                                 SYS__MANAGER__ACCELEROMETER_Z_PIN);
-#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
-
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-    srv__daq__ride_height_init(SYS__MANAGER__RIDE_HEIGHT_PIN);
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-#if SYS__MANAGER__WHEEL_SPEED_ENABLED
-    srv__daq__wheel_speed_init(SYS__MANAGER__WHEEL_SPEED_PIN);
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
-
-    Serial.println("SYSTEM INIT FINISHED");
-}
-
-/*************************************************************************//**
-* @brief services loops
-* @param None
-* @return None
-* @note
-*****************************************************************************/
-void sys__manager__process()
-{
-    srv__daq__process(sys__datastore);
+    uint32_t adcRaw = analogRead(obj->pin);
+    return (adcRaw * obj->conversionRate);
 }
 /*----------------------------------------------------------------------------
-  private functions
+  compile time checks
+----------------------------------------------------------------------------*/
+
+#endif //CONTROLLER_V2_DEV__DAMPER__POTS_H
+
+/*----------------------------------------------------------------------------
+  End of file
 ----------------------------------------------------------------------------*/
