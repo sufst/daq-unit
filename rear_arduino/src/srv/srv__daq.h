@@ -71,6 +71,10 @@ void srv__daq__ride_height_init(uint8_t pin);
 void srv__daq__wheel_speeds_init(uint8_t *pins);
 #endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
 
+#if SYS__MANAGER__FUEL_FLOW_ENABLED
+void srv__daq__fuel_flow_init(uint8_t pin);
+#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
+
 void srv__daq__process(sys__datastore_t dataStore);
 /*----------------------------------------------------------------------------
   inlines

@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file sys__manager.cpp
-* @brief System manager 
+* @file dev__fuel__flow.cpp
+* @brief Fuel flow sensor device layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,12 @@
 /*----------------------------------------------------------------------------
   include files
 ----------------------------------------------------------------------------*/
-#include "sys__manager.h"
-#include "../srv/srv__daq.h"
-
-#include "sys__datastore.h"
-
+#include "dev__fuel__flow.h"
 
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
+#define DEV__FUEL__FLOW__ADC_CONVERSION_UV 488
 
 /*----------------------------------------------------------------------------
   type definitions
@@ -37,7 +34,6 @@
   prototypes
 ----------------------------------------------------------------------------*/
 
-
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -45,7 +41,6 @@
 /*----------------------------------------------------------------------------
   global variables
 ----------------------------------------------------------------------------*/
-sys__datastore_t sys__datastore;
 
 /*----------------------------------------------------------------------------
   static variables
@@ -54,60 +49,23 @@ sys__datastore_t sys__datastore;
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
-
 /*************************************************************************//**
-* @brief Initialises the system
-* @param None
+* @brief Initialise the fuel flow sensor pin
+* @param dev__fuel__flow__obj_t *obj Fuel flow sensor device object
 * @return None
 * @note
 *****************************************************************************/
-void sys__manager__init()
+void dev__fuel__flow__init(dev__fuel__flow__obj_t *obj)
 {
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-    uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_1_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_2_PIN};
-    srv__daq__damper_pots_init(SYS__MANAGER__DAMPER_POTS_POLL_MS, dampersPins);
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__ACCELEROMETERS_ENABLED
-    // 3 pins per accelerometer, x, y, z axis
-    uint8_t accelerometerPins[SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT*SYS__MANAGER__ACCELEROMETER_ATTACHED_PINS] 
-                                                                          = {SYS__MANAGER__ACCELEROMETER_X_1_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_Y_1_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_Z_1_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_X_2_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_Y_2_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_Z_2_PIN};
-    srv__daq__accelerometers_init(accelerometerPins);
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
-
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-    srv__daq__ride_height_init(SYS__MANAGER__RIDE_HEIGHT_PIN);
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-#if SYS__MANAGER__WHEEL_SPEEDS_ENABLED
-    uint8_t wheelSpeedPins[SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT] = {SYS__MANAGER__WHEEL_SPEED_1_PIN,
-                                                                       SYS__MANAGER__WHEEL_SPEED_2_PIN};
-    srv__daq__wheel_speeds_init(wheelSpeedPins);
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
-
-#if SYS__MANAGER__FUEL_FLOW_ENABLED
-    srv__daq__fuel_flow_init(SYS__MANAGER__FUEL_FLOW_PIN);
-#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
-
-    Serial.println("SYSTEM INIT FINISHED");
+    pinMode(obj->pin, INPUT_PULLUP);
+    obj->conversionRate = DEV__FUEL__FLOW__ADC_CONVERSION_UV;
 }
 
-/*************************************************************************//**
-* @brief services loops
-* @param None
-* @return None
-* @note
-*****************************************************************************/
-void sys__manager__process()
-{
-    srv__daq__process(sys__datastore);
-}
 /*----------------------------------------------------------------------------
   private functions
 ----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------
+  End of file
+----------------------------------------------------------------------------*/
+

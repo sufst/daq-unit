@@ -65,10 +65,8 @@ void dev__ride__height__init(dev__ride__height__obj_t *obj);
 *****************************************************************************/
 inline uint32_t dev__ride__height__read_uv(dev__ride__height__obj_t *obj)
 {
-    //uint32_t adcRaw = analogRead(obj->pin);
-    //return (adcRaw * obj->conversionRate);
-    uint32_t adcRaw = 0;
-    return adcRaw;
+    uint32_t adcRaw = analogRead(obj->pin);
+    return (adcRaw * obj->conversionRate);
 }
 /*----------------------------------------------------------------------------
   compile time checks

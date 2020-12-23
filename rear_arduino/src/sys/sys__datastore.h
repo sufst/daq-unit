@@ -77,6 +77,15 @@ typedef struct
 } sys__datastore__wheel_speed_save_t;
 #endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
 
+#if SYS__MANAGER__FUEL_FLOW_ENABLED
+typedef struct
+{
+    uint8_t tag;
+    uint32_t data;
+    uint32_t timestamp;
+} sys__datastore__fuel_flow_save_t;
+#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
+
 typedef struct
 {
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
@@ -97,7 +106,11 @@ typedef struct
     sys__datastore__wheel_speed_save_t wheelSpeeds[SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT];
 #endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
 
+#if SYS__MANAGER__FUEL_FLOW_ENABLED
+    sys__datastore__fuel_flow_save_t fuelFlow;
+#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
 } sys__datastore_t;
+
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/

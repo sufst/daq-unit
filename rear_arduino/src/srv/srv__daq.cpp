@@ -40,6 +40,10 @@
 #include "../dev/dev__wheel__speed.h"
 #endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
 
+#if SYS__MANAGER__FUEL_FLOW_ENABLED
+#include "../dev/dev__fuel__flow.h"
+#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
+
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
@@ -80,6 +84,9 @@ static dev__ride__height__obj_t dev__ride__height__obj;
 static dev__wheel__speed__obj_t dev__wheel__speeds__obj[SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT];
 #endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
 
+#if SYS__MANAGER__FUEL_FLOW_ENABLED
+static dev__fuel__flow__obj_t dev__fuel__flow__obj;
+#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
@@ -153,6 +160,20 @@ void srv__daq__wheel_speeds_init(uint8_t *pins)
 }
 #endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
 
+#if SYS__MANAGER__FUEL_FLOW_ENABLED
+/*************************************************************************//**
+* @brief Initialise ride height sensor
+* @param uint8_t pins Ride height pin
+* @return None
+* @note
+*****************************************************************************/
+void srv__daq__fuel_flow_init(uint8_t pin)
+{
+    dev__fuel__flow__obj.pin = pin;
+    dev__fuel__flow__init(&dev__fuel__flow__obj);
+}
+#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
+
 /*----------------------------------------------------------------------------
   private functions
 ----------------------------------------------------------------------------*/
@@ -184,6 +205,9 @@ void srv__daq__process(sys__datastore_t dataStore)
   for(uint8_t i=0; i<SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT; i++){
     dataStore.wheelSpeeds[i].data = dev__wheel_speed__read_uv(&dev__wheel__speeds__obj[i]);
   }
+
+  // Read fuel flow
+  dataStore.fuelFlow.data = dev__fuel__flow__read_uv(&dev__fuel__flow__obj);
 
 }
 
