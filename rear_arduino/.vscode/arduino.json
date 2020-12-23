@@ -1,0 +1,5 @@
+{
+    "programmer": "AVR ISP",
+    "board": "arduino:samd:mkr1000",
+    "sketch": "rear_arduino.ino"
+}

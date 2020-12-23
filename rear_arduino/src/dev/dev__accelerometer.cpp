@@ -56,7 +56,7 @@
 * @return None
 * @note
 *****************************************************************************/
-void dev__accelerometer__init(dev__accelerometer__obj_t* obj)
+void dev__accelerometer__init(dev__accelerometer__obj_t *obj)
 {
     pinMode(obj->pinX, INPUT_PULLUP);
     pinMode(obj->pinY, INPUT_PULLUP);

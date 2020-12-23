@@ -59,17 +59,17 @@ typedef enum
 void srv__daq__damper_pots_init(uint16_t ms, uint8_t *pins);
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
-#if SYS__MANAGER__ACCELEROMETER_ENABLED
-void srv__daq__accelerometer_init(uint8_t pinX, uint8_t pinY, uint8_t pinZ);
-#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
+#if SYS__MANAGER__ACCELEROMETERS_ENABLED
+void srv__daq__accelerometers_init(uint8_t *pins);
+#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
 void srv__daq__ride_height_init(uint8_t pin);
 #endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
 
-#if SYS__MANAGER__WHEEL_SPEED_ENABLED
-void srv__daq__wheel_speed_init(uint8_t pin);
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
+#if SYS__MANAGER__WHEEL_SPEEDS_ENABLED
+void srv__daq__wheel_speeds_init(uint8_t *pins);
+#endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
 
 void srv__daq__process(sys__datastore_t dataStore);
 /*----------------------------------------------------------------------------

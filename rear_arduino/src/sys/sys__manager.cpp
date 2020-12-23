@@ -65,24 +65,30 @@ void sys__manager__init()
 {
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
     uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_1_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_2_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_3_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_4_PIN};
+                                                                   SYS__MANAGER__DAMPER_POT_2_PIN};
     srv__daq__damper_pots_init(SYS__MANAGER__DAMPER_POTS_POLL_MS, dampersPins);
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
-#if SYS__MANAGER__ACCELEROMETER_ENABLED
-    srv__daq__accelerometer_init(SYS__MANAGER__ACCELEROMETER_X_PIN, 
-                                 SYS__MANAGER__ACCELEROMETER_Y_PIN, 
-                                 SYS__MANAGER__ACCELEROMETER_Z_PIN);
-#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
+#if SYS__MANAGER__ACCELEROMETERS_ENABLED
+    // 3 pins per accelerometer, x, y, z axis
+    uint8_t accelerometerPins[SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT*SYS__MANAGER__ACCELEROMETER_ATTACHED_PINS] 
+                                                                          = {SYS__MANAGER__ACCELEROMETER_X_1_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_Y_1_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_Z_1_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_X_2_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_Y_2_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_Z_2_PIN};
+    srv__daq__accelerometers_init(accelerometerPins);
+#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
     srv__daq__ride_height_init(SYS__MANAGER__RIDE_HEIGHT_PIN);
 #endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
 
-#if SYS__MANAGER__WHEEL_SPEED_ENABLED
-    srv__daq__wheel_speed_init(SYS__MANAGER__WHEEL_SPEED_PIN);
+#if SYS__MANAGER__WHEEL_SPEEDS_ENABLED
+    uint8_t wheelSpeedPins[SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT] = {SYS__MANAGER__WHEEL_SPEED_1_PIN,
+                                                                       SYS__MANAGER__WHEEL_SPEED_2_PIN};
+    srv__daq__wheel_speeds_init(wheelSpeedPins);
 #endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
 
     Serial.println("SYSTEM INIT FINISHED");

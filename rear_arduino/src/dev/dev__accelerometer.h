@@ -53,7 +53,7 @@ typedef struct
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-void dev__accelerometer__init(dev__accelerometer__obj_t* obj);
+void dev__accelerometer__init(dev__accelerometer__obj_t *obj);
 
 /*----------------------------------------------------------------------------
   inlines
