@@ -36,24 +36,23 @@
 ----------------------------------------------------------------------------*/
 #define SYS__MANAGER__DAMPER_POTS_ENABLED 1
 #define SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT 4
-#define SYS__MANAGER__DAMPER_POT_1_PIN 1
-#define SYS__MANAGER__DAMPER_POT_2_PIN 2
-#define SYS__MANAGER__DAMPER_POT_3_PIN 3
-#define SYS__MANAGER__DAMPER_POT_4_PIN 4
-#define SYS__MANAGER__DAMPER_POT_5_PIN 5
+#define SYS__MANAGER__DAMPER_POT_PIN 1
 #define SYS__MANAGER__DAMPER_POTS_POLL_MS 20
 
 #define SYS__MANAGER__ACCELEROMETER_ENABLED 1
-#define SYS__MANAGER__ACCELEROMETER_X_PIN 6
-#define SYS__MANAGER__ACCELEROMETER_Y_PIN 7
-#define SYS__MANAGER__ACCELEROMETER_Z_PIN 8
+#define SYS__MANAGER__ACCELEROMETER_X_PIN 2
+#define SYS__MANAGER__ACCELEROMETER_Y_PIN 3
+#define SYS__MANAGER__ACCELEROMETER_Z_PIN 4
 
 #define SYS__MANAGER__RIDE_HEIGHT_ENABLED 1
-#define SYS__MANAGER__RIDE_HEIGHT_PIN 9
+#define SYS__MANAGER__RIDE_HEIGHT_PIN 5
 
 #define SYS__MANAGER__WHEEL_SPEED_ENABLED 1
-#define SYS__MANAGER__WHEEL_SPEED_PIN 10
+#define SYS__MANAGER__WHEEL_SPEED_PIN 6
 
+#define SYS__MANAGER__CAN_BUS_ENABLED 1
+#define SYS__MANAGER__CAN_ID 7
+#define SYS__MANAGER__CAN_CS_PIN 8
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/

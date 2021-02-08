@@ -65,7 +65,7 @@
   static variables
 ----------------------------------------------------------------------------*/
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
-static dev__damper__pots__obj_t dev__damper__pots__obj[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT];
+static dev__damper__pots__obj_t dev__damper__pots__obj;
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
 #if SYS__MANAGER__ACCELEROMETER_ENABLED
@@ -91,13 +91,10 @@ static dev__wheel__speed__obj_t dev__wheel__speed__obj;
 * @return None
 * @note
 *****************************************************************************/
-void srv__daq__damper_pots_init(uint16_t ms, uint8_t *pins)
+void srv__daq__damper_pots_init(uint8_t pin)
 {
-    for (uint8_t i = 0; i < SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT; i++)
-    {
-        dev__damper__pots__obj[i].pin = pins[i];
-        dev__damper__pots__init(&dev__damper__pots__obj[i]);
-    }
+    dev__damper__pots__obj.pin = pin;
+    dev__damper__pots__init(&dev__damper__pots__obj);    
 }
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
@@ -161,6 +158,9 @@ void srv__daq__wheel_speed_init(uint8_t pin)
 *****************************************************************************/
 void srv__daq__process(sys__datastore_t dataStore)
 { 
+  // Read damper pots
+  dataStore.damperPots.data = dev__damper__pots__read_pot_uv(&dev__damper__pots__obj);
+
   // Read accelerometer
   dataStore.accelerometer.dataX = dev__accelerometer_x__read_uv(&dev__accelerometer__obj);
   dataStore.accelerometer.dataY = dev__accelerometer_y__read_uv(&dev__accelerometer__obj);
@@ -171,6 +171,7 @@ void srv__daq__process(sys__datastore_t dataStore)
 
   // Read wheel speed
   dataStore.wheelSpeed.data = dev__wheel_speed__read_uv(&dev__wheel__speed__obj);
+
 }
 
 /*----------------------------------------------------------------------------

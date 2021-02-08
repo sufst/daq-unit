@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file srv__daq.h
-* @brief DAQ service layer
+* @file srv__comms.h
+* @brief Communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -20,14 +20,14 @@
   @brief
 ----------------------------------------------------------------------------*/
 
-#ifndef CONTROLLER_V2_SRV__DAQ_H
-#define CONTROLLER_V2_SRV__DAQ_H
+#ifndef CONTROLLER_V2_SRV__COMMS_H
+#define CONTROLLER_V2_SRV__COMMS_H
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
 #include "Arduino.h"
 
-#include <stdint.h> 
+#include <stdint.h>
 
 #include "../sys/sys__manager.h"
 #include "../sys/sys__datastore.h"
@@ -44,34 +44,29 @@
 ----------------------------------------------------------------------------*/
 typedef enum
 {
-    SRV__DAQ__ERROR_NONE,
-    SRV__DAQ__ERROR
-} srv__daq__state_t;
+    SRV__COMMS__CMD_DAMPER = 0x01,
+    SRV__COMMS__CMD_ACCELEROMETER_X,
+    SRV__COMMS__CMD_ACCELEROMETER_Y,
+    SRV__COMMS__CMD_ACCELEROMETER_Z,
+    SRV__COMMS__CMD_RIDE_HEIGHT,
+    SRV__COMMS__CMD_WHEEL_SPEED,
+    SRV__COMMS__CMD_TIME_STAMP
+} srv__comms__cmd_t;
 
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
-
+extern srv__comms__cmd_t srv__comms_cmd;
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-void srv__daq__damper_pots_init(uint8_t pin);
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
+#if SYS__MANAGER__CAN_BUS_ENABLED
+void srv__comms__can_init(uint8_t pinCS);
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
 
-#if SYS__MANAGER__ACCELEROMETER_ENABLED
-void srv__daq__accelerometer_init(uint8_t pinX, uint8_t pinY, uint8_t pinZ);
-#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
 
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-void srv__daq__ride_height_init(uint8_t pin);
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-#if SYS__MANAGER__WHEEL_SPEED_ENABLED
-void srv__daq__wheel_speed_init(uint8_t pin);
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
-
-void srv__daq__process(sys__datastore_t dataStore);
+void srv__comms__process(sys__datastore_t dataStore);
+void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand);
 /*----------------------------------------------------------------------------
   inlines
 ----------------------------------------------------------------------------*/
@@ -80,7 +75,7 @@ void srv__daq__process(sys__datastore_t dataStore);
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif //CONTROLLER_V2_SRV__DAQ_H
+#endif //CONTROLLER_V2_SRV__COMMS_H
 
 /*----------------------------------------------------------------------------
   End of file

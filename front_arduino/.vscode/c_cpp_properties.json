@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Users\\Tom\\Documents\\Arduino\\libraries\\arduino-mcp2515-master",
+                "C:\\Users\\Tom\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**",
+                "C:\\Users\\Tom\\Documents\\Arduino\\libraries\\**",
+                "C:\\Program Files (x86)\\Arduino\\libraries\\**",
+                "C:\\Users\\Tom\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.8.9\\**"
+            ],
+            "forcedInclude": [
+                "C:\\Users\\Tom\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.8.9\\cores\\arduino\\Arduino.h"
+            ],
+            "defines": [
+                "USBCON"
+            ],
+            "intelliSenseMode": "windows-msvc-x64",
+            "compilerPath": "C:\\MinGW\\bin\\gcc.exe",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14"
+        }
+    ],
+    "version": 4
+}

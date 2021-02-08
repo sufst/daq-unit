@@ -21,6 +21,7 @@
 ----------------------------------------------------------------------------*/
 #include "sys__manager.h"
 #include "../srv/srv__daq.h"
+#include "../srv/srv__comms.h"
 
 #include "sys__datastore.h"
 
@@ -63,12 +64,10 @@ sys__datastore_t sys__datastore;
 *****************************************************************************/
 void sys__manager__init()
 {
+
+    // Initialise Sensors
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
-    uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_1_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_2_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_3_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_4_PIN};
-    srv__daq__damper_pots_init(SYS__MANAGER__DAMPER_POTS_POLL_MS, dampersPins);
+    srv__daq__damper_pots_init(SYS__MANAGER__DAMPER_POT_PIN);
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
 #if SYS__MANAGER__ACCELEROMETER_ENABLED
@@ -85,6 +84,11 @@ void sys__manager__init()
     srv__daq__wheel_speed_init(SYS__MANAGER__WHEEL_SPEED_PIN);
 #endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
 
+
+    // Initialise CAN MCP2515
+#if SYS__MANAGER__CAN_BUS_ENABLED 
+    srv__comms__can_init(SYS__MANAGER__CAN_CS_PIN);
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
     Serial.println("SYSTEM INIT FINISHED");
 }
 
@@ -97,6 +101,7 @@ void sys__manager__init()
 void sys__manager__process()
 {
     srv__daq__process(sys__datastore);
+    srv__comms__process(sys__datastore);
 }
 /*----------------------------------------------------------------------------
   private functions

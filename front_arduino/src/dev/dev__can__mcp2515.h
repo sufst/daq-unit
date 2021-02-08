@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file srv__daq.h
-* @brief DAQ service layer
+* @file dev__can__mcp2515.h
+* @brief Device layer implementing the MCP2515 CAN Controller
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,21 +16,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
+
 /*----------------------------------------------------------------------------
   @brief
 ----------------------------------------------------------------------------*/
+#ifndef CONTROLLER_V2_DEV__CAN__MCP2515_H
+#define CONTROLLER_V2_DEV__CAN__MCP2515_H
 
-#ifndef CONTROLLER_V2_SRV__DAQ_H
-#define CONTROLLER_V2_SRV__DAQ_H
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
 #include "Arduino.h"
 
-#include <stdint.h> 
-
-#include "../sys/sys__manager.h"
-#include "../sys/sys__datastore.h"
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -42,11 +39,6 @@
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
-typedef enum
-{
-    SRV__DAQ__ERROR_NONE,
-    SRV__DAQ__ERROR
-} srv__daq__state_t;
 
 /*----------------------------------------------------------------------------
   extern variables
@@ -55,23 +47,8 @@ typedef enum
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-void srv__daq__damper_pots_init(uint8_t pin);
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
+void dev__can__mcp2515__init(uint8_t pin);
 
-#if SYS__MANAGER__ACCELEROMETER_ENABLED
-void srv__daq__accelerometer_init(uint8_t pinX, uint8_t pinY, uint8_t pinZ);
-#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
-
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-void srv__daq__ride_height_init(uint8_t pin);
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-#if SYS__MANAGER__WHEEL_SPEED_ENABLED
-void srv__daq__wheel_speed_init(uint8_t pin);
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
-
-void srv__daq__process(sys__datastore_t dataStore);
 /*----------------------------------------------------------------------------
   inlines
 ----------------------------------------------------------------------------*/
@@ -80,7 +57,7 @@ void srv__daq__process(sys__datastore_t dataStore);
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif //CONTROLLER_V2_SRV__DAQ_H
+#endif // CONTROLLER_V2_DEV__CAN__MCP2515_H
 
 /*----------------------------------------------------------------------------
   End of file
