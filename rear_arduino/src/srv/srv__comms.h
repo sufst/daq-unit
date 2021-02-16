@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file sys__manager.h
-* @brief Main system application
+* @file srv__comms.h
+* @brief Communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -17,16 +17,20 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
 /*----------------------------------------------------------------------------
-  @brief sys__manager.h holds all the common configurable compile options for the system
+  @brief
 ----------------------------------------------------------------------------*/
-#ifndef SYS__MANAGER_H
-#define SYS__MANAGER_H
 
+#ifndef CONTROLLER_V2_SRV__COMMS_H
+#define CONTROLLER_V2_SRV__COMMS_H
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
-//#include "Arduino.h"
+#include "Arduino.h"
 
+#include <stdint.h>
+
+#include "../sys/sys__manager.h"
+#include "../sys/sys__datastore.h"
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -34,50 +38,41 @@
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
-#define SYS__MANAGER__DAMPER_POTS_ENABLED 1
-#define SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT 2
-#define SYS__MANAGER__DAMPER_POT_1_PIN 1
-#define SYS__MANAGER__DAMPER_POT_2_PIN 2
-
-#define SYS__MANAGER__ACCELEROMETERS_ENABLED 1
-#define SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT 2
-#define SYS__MANAGER__ACCELEROMETER_ATTACHED_PINS 3
-#define SYS__MANAGER__ACCELEROMETER_X_1_PIN 3
-#define SYS__MANAGER__ACCELEROMETER_Y_1_PIN 4
-#define SYS__MANAGER__ACCELEROMETER_Z_1_PIN 5
-#define SYS__MANAGER__ACCELEROMETER_X_2_PIN 6
-#define SYS__MANAGER__ACCELEROMETER_Y_2_PIN 7
-#define SYS__MANAGER__ACCELEROMETER_Z_2_PIN 8
-
-#define SYS__MANAGER__RIDE_HEIGHT_ENABLED 1
-#define SYS__MANAGER__RIDE_HEIGHT_PIN 9
-
-#define SYS__MANAGER__WHEEL_SPEEDS_ENABLED 1
-#define SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT 2
-#define SYS__MANAGER__WHEEL_SPEED_1_PIN 10
-#define SYS__MANAGER__WHEEL_SPEED_2_PIN 11
-
-#define SYS__MANAGER__FUEL_FLOW_ENABLED 1
-#define SYS__MANAGER__FUEL_FLOW_PIN 12
-
-#define SYS__MANAGER__CAN_BUS_ENABLED 1
-#define SYS__MANAGER__CAN_ID 13
-#define SYS__MANAGER__CAN_CS_PIN 14
 
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
+typedef enum
+{
+    SRV__COMMS__CMD_DAMPER_1 = 0x01,
+    SRV__COMMS__CMD_DAMPER_2,
+    SRV__COMMS__CMD_ACCELEROMETER_X_1,
+    SRV__COMMS__CMD_ACCELEROMETER_Y_1,
+    SRV__COMMS__CMD_ACCELEROMETER_Z_1,
+    SRV__COMMS__CMD_ACCELEROMETER_X_2,
+    SRV__COMMS__CMD_ACCELEROMETER_Y_2,
+    SRV__COMMS__CMD_ACCELEROMETER_Z_2,
+    SRV__COMMS__CMD_RIDE_HEIGHT,
+    SRV__COMMS__CMD_WHEEL_SPEED_1,
+    SRV__COMMS__CMD_WHEEL_SPEED_2,
+    SRV__COMMS__CMD_FUEL_FLOW,
+    SRV__COMMS__CMD_TIME_STAMP
+} srv__comms__cmd_t;
 
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
-
+extern srv__comms__cmd_t srv__comms_cmd;
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-void sys__manager__init();
+#if SYS__MANAGER__CAN_BUS_ENABLED
+void srv__comms__can_init(uint8_t pinCS);
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
 
-void sys__manager__process();
+
+void srv__comms__process(sys__datastore_t dataStore);
+void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand);
 /*----------------------------------------------------------------------------
   inlines
 ----------------------------------------------------------------------------*/
@@ -86,4 +81,8 @@ void sys__manager__process();
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif //SYS__MANAGER_H
+#endif //CONTROLLER_V2_SRV__COMMS_H
+
+/*----------------------------------------------------------------------------
+  End of file
+----------------------------------------------------------------------------*/

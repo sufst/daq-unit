@@ -98,7 +98,7 @@ static dev__fuel__flow__obj_t dev__fuel__flow__obj;
 * @return None
 * @note
 *****************************************************************************/
-void srv__daq__damper_pots_init(uint16_t ms, uint8_t *pins)
+void srv__daq__damper_pots_init(uint8_t *pins)
 {
     for (uint8_t i = 0; i < SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT; i++)
     {

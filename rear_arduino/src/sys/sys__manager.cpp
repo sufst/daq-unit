@@ -66,7 +66,7 @@ void sys__manager__init()
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
     uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_1_PIN,
                                                                    SYS__MANAGER__DAMPER_POT_2_PIN};
-    srv__daq__damper_pots_init(SYS__MANAGER__DAMPER_POTS_POLL_MS, dampersPins);
+    srv__daq__damper_pots_init(dampersPins);
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
 #if SYS__MANAGER__ACCELEROMETERS_ENABLED

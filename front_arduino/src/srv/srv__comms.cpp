@@ -125,7 +125,7 @@ void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand)
       msg.data[4] = (sys__datastore.accelerometer.dataX>>24) & 0xFF;
       break;
     case SRV__COMMS__CMD_ACCELEROMETER_Y:
-      msg.data[0] = SRV__COMMS__CMD_ACCELEROMETER_X;
+      msg.data[0] = SRV__COMMS__CMD_ACCELEROMETER_Y;
       msg.data[1] = sys__datastore.accelerometer.dataY & 0xFF;
       msg.data[2] = (sys__datastore.accelerometer.dataY>>8) & 0xFF;
       msg.data[3] = (sys__datastore.accelerometer.dataY>>16) & 0xFF;
