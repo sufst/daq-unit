@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file srv__comms.h
-* @brief Communications service layer
+* @file srv__can.h
+* @brief CAN communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify

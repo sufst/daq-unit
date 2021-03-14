@@ -21,7 +21,7 @@
 ----------------------------------------------------------------------------*/
 #include "sys__manager.h"
 #include "../srv/srv__daq.h"
-#include "../srv/srv__comms.h"
+#include "../srv/srv__can.h"
 
 #include "sys__datastore.h"
 

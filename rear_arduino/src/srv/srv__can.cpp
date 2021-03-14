@@ -1,5 +1,5 @@
 /*************************************************************************//**
-* @file srv__daq.cpp
+* @file srv__can.cpp
 * @brief DAQ service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
@@ -19,17 +19,16 @@
 /*----------------------------------------------------------------------------
   include files
 ----------------------------------------------------------------------------*/
-#include "srv__comms.h"
+#include "srv__can.h"
 
 #include "../sys/sys__manager.h"
 #include "../sys/sys__datastore.h"
 
-#if SYS__MANAGER__CAN_BUS_ENABLED 
-#include "../dev/dev__can__mcp2515.h"
-#endif // SYS__MANAGER__CAN_BUS_ENABLED
-
+#if SYS__MANAGER__CAN_BUS_ENABLED
 #include <SPI.h>
 #include <mcp2515.h>
+#include "srv__can.h"
+#endif SYS__MANAGER__CAN_BUS_ENABLED
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
@@ -50,6 +49,7 @@
   global variables
 ----------------------------------------------------------------------------*/
 MCP2515 mcp2515(SYS__MANAGER__CAN_CS_PIN);  
+bool interrupt = false;
 
 /*----------------------------------------------------------------------------
   static variables
@@ -59,6 +59,10 @@ MCP2515 mcp2515(SYS__MANAGER__CAN_CS_PIN);
   public functions
 ----------------------------------------------------------------------------*/
 #if SYS__MANAGER__CAN_BUS_ENABLED
+void rxCanHandler() {
+    interrupt = true;
+}
+
 /*************************************************************************//**
 * @brief Initialise MCP2515 CAN
 * @param uint8_t pinCS Pin number of connection to SPI CS of MCP2515
@@ -67,9 +71,10 @@ MCP2515 mcp2515(SYS__MANAGER__CAN_CS_PIN);
 *****************************************************************************/
 void srv__comms__can_init(uint8_t pinCS)
 {  
-    mcp2515.reset();                  
-    mcp2515.setBitrate(CAN_125KBPS);  
-    mcp2515.setNormalMode();          // Send and recieve mode
+  mcp2515.reset();
+  mcp2515.setBitrate(CAN_125KBPS);
+  mcp2515.setNormalMode();
+
 }
 
 
@@ -86,13 +91,29 @@ void srv__comms__can_init(uint8_t pinCS)
 *****************************************************************************/
 void srv__comms__process(sys__datastore_t dataStore)
 { 
+  struct can_frame rxFrame;
 
-  srv__comms__can_tx(dataStore, SRV__COMMS__CMD_DAMPER);
-  srv__comms__can_tx(dataStore, SRV__COMMS__CMD_ACCELEROMETER_X);
-  srv__comms__can_tx(dataStore, SRV__COMMS__CMD_ACCELEROMETER_Y);
-  srv__comms__can_tx(dataStore, SRV__COMMS__CMD_ACCELEROMETER_Z);
-  srv__comms__can_tx(dataStore, SRV__COMMS__CMD_RIDE_HEIGHT);
-  srv__comms__can_tx(dataStore, SRV__COMMS__CMD_WHEEL_SPEED);  
+  if (interrupt) {
+    interrupt = false;
+
+    uint8_t irq = mcp2515.getInterrupts();
+
+    if (irq & MCP2515::CANINTF_RX0IF) {
+      if (mcp2515.readMessage(MCP2515::RXB0, &rxFrame) == MCP2515::ERROR_OK) {
+        // frame contains received from RXB0 message
+        Serial.print(rxFrame.can_id, HEX); // print ID
+        Serial.print(" "); 
+        Serial.println(rxFrame.can_dlc, HEX); // print DLC
+  
+        for (int i = 0; i<rxFrame.can_dlc; i++)  {  // print the data
+          Serial.print(rxFrame.data[i],HEX);
+          Serial.print(" ");
+        }
+      }
+    }
+
+}
+
 
 }
 
@@ -110,47 +131,12 @@ void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand)
   msg.can_dlc = 5;      // Send 8 bytes (max)
 
   switch(canCommand){
-    case SRV__COMMS__CMD_DAMPER:
-      msg.data[0] = SRV__COMMS__CMD_DAMPER;
-      msg.data[1] = sys__datastore.damperPots.data & 0xFF;
-      msg.data[2] = (sys__datastore.damperPots.data>>8) & 0xFF;
-      msg.data[3] = (sys__datastore.damperPots.data>>16) & 0xFF;
-      msg.data[4] = (sys__datastore.damperPots.data>>24) & 0xFF;
-      break;
-    case SRV__COMMS__CMD_ACCELEROMETER_X:
-      msg.data[0] = SRV__COMMS__CMD_ACCELEROMETER_X;
-      msg.data[1] = sys__datastore.accelerometer.dataX & 0xFF;
-      msg.data[2] = (sys__datastore.accelerometer.dataX>>8) & 0xFF;
-      msg.data[3] = (sys__datastore.accelerometer.dataX>>16) & 0xFF;
-      msg.data[4] = (sys__datastore.accelerometer.dataX>>24) & 0xFF;
-      break;
-    case SRV__COMMS__CMD_ACCELEROMETER_Y:
-      msg.data[0] = SRV__COMMS__CMD_ACCELEROMETER_Y;
-      msg.data[1] = sys__datastore.accelerometer.dataY & 0xFF;
-      msg.data[2] = (sys__datastore.accelerometer.dataY>>8) & 0xFF;
-      msg.data[3] = (sys__datastore.accelerometer.dataY>>16) & 0xFF;
-      msg.data[4] = (sys__datastore.accelerometer.dataY>>24) & 0xFF;
-      break;
-    case SRV__COMMS__CMD_ACCELEROMETER_Z:
-      msg.data[0] = SRV__COMMS__CMD_ACCELEROMETER_Z;
-      msg.data[1] = sys__datastore.accelerometer.dataZ & 0xFF;
-      msg.data[2] = (sys__datastore.accelerometer.dataZ>>8) & 0xFF;
-      msg.data[3] = (sys__datastore.accelerometer.dataZ>>16) & 0xFF;
-      msg.data[4] = (sys__datastore.accelerometer.dataZ>>24) & 0xFF;
-      break;
-    case SRV__COMMS__CMD_RIDE_HEIGHT:
-      msg.data[0] = SRV__COMMS__CMD_RIDE_HEIGHT;
-      msg.data[1] = sys__datastore.rideHeight.data & 0xFF;
-      msg.data[2] = (sys__datastore.rideHeight.data>>8) & 0xFF;
-      msg.data[3] = (sys__datastore.rideHeight.data>>16) & 0xFF;
-      msg.data[4] = (sys__datastore.rideHeight.data>>24) & 0xFF;
-      break;
-    case SRV__COMMS__CMD_WHEEL_SPEED:
-      msg.data[0] = SRV__COMMS__CMD_WHEEL_SPEED;
-      msg.data[1] = sys__datastore.wheelSpeed.data & 0xFF;
-      msg.data[2] = (sys__datastore.wheelSpeed.data>>8) & 0xFF;
-      msg.data[3] = (sys__datastore.wheelSpeed.data>>16) & 0xFF;
-      msg.data[4] = (sys__datastore.wheelSpeed.data>>24) & 0xFF;
+    case SRV__COMMS__CMD_FUEL_FLOW:
+      msg.data[0] = SRV__COMMS__CMD_FUEL_FLOW;
+      msg.data[1] = sys__datastore.fuelFlow.data & 0xFF;
+      msg.data[2] = (sys__datastore.fuelFlow.data>>8) & 0xFF;
+      msg.data[3] = (sys__datastore.fuelFlow.data>>16) & 0xFF;
+      msg.data[4] = (sys__datastore.fuelFlow.data>>24) & 0xFF;
       break;
   }
 

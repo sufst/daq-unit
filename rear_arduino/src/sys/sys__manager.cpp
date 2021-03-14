@@ -21,7 +21,7 @@
 ----------------------------------------------------------------------------*/
 #include "sys__manager.h"
 #include "../srv/srv__daq.h"
-
+#include "../srv/srv__can.h"
 #include "sys__datastore.h"
 
 
@@ -95,6 +95,10 @@ void sys__manager__init()
     srv__daq__fuel_flow_init(SYS__MANAGER__FUEL_FLOW_PIN);
 #endif // SYS__MANAGER__FUEL_FLOW_ENABLED
 
+#if SYS__MANAGER__CAN_BUS_ENABLED
+    srv__comms__can_init(SYS__MANAGER__CAN_CS_PIN);
+#endif //SYS__MANAGER__CAN_BUS_ENABLED
+
     Serial.println("SYSTEM INIT FINISHED");
 }
 
@@ -107,6 +111,7 @@ void sys__manager__init()
 void sys__manager__process()
 {
     srv__daq__process(sys__datastore);
+    srv__comms__process(sys__datastore);
 }
 /*----------------------------------------------------------------------------
   private functions

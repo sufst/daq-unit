@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file dev__can__mcp2515.h
-* @brief Device layer implementing the MCP2515 CAN Controller
+* @file srv__can.h
+* @brief Communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,53 +16,73 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-
 /*----------------------------------------------------------------------------
-  include files
-----------------------------------------------------------------------------*/
-#include "dev__can__mcp2515.h"
-
-/*----------------------------------------------------------------------------
-  manifest constants
-----------------------------------------------------------------------------*/
-#define DEV__WHEEL__SPEED__ADC_CONVERSION_UV 488
-
-/*----------------------------------------------------------------------------
-  type definitions
+  @brief
 ----------------------------------------------------------------------------*/
 
+#ifndef CONTROLLER_V2_SRV__COMMS_H
+#define CONTROLLER_V2_SRV__COMMS_H
 /*----------------------------------------------------------------------------
-  prototypes
+  nested include files
 ----------------------------------------------------------------------------*/
+#include "Arduino.h"
 
+#include <stdint.h>
+
+#include "../sys/sys__manager.h"
+#include "../sys/sys__datastore.h"
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  global variables
+  manifest constants
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  static variables
+  type definitions
 ----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  public functions
-----------------------------------------------------------------------------*/
-/*************************************************************************//**
-* @brief Initialise the wheel speed sensor
-* @param dev__wheel__speed__obj_t* obj Wheel speed device object
-* @return None
-* @note
-*****************************************************************************/
-void dev__can__mcp2515__init(uint8_t pin)
+typedef enum
 {
-    pinMode(pin, INPUT_PULLUP);
-}
+    SRV__COMMS__CMD_DAMPER_1 = 0x01,
+    SRV__COMMS__CMD_DAMPER_2,
+    SRV__COMMS__CMD_ACCELEROMETER_X_1,
+    SRV__COMMS__CMD_ACCELEROMETER_Y_1,
+    SRV__COMMS__CMD_ACCELEROMETER_Z_1,
+    SRV__COMMS__CMD_ACCELEROMETER_X_2,
+    SRV__COMMS__CMD_ACCELEROMETER_Y_2,
+    SRV__COMMS__CMD_ACCELEROMETER_Z_2,
+    SRV__COMMS__CMD_RIDE_HEIGHT,
+    SRV__COMMS__CMD_WHEEL_SPEED_1,
+    SRV__COMMS__CMD_WHEEL_SPEED_2,
+    SRV__COMMS__CMD_FUEL_FLOW,
+    SRV__COMMS__CMD_TIME_STAMP
+} srv__comms__cmd_t;
+
 /*----------------------------------------------------------------------------
-  private functions
+  extern variables
 ----------------------------------------------------------------------------*/
+extern srv__comms__cmd_t srv__comms_cmd;
+/*----------------------------------------------------------------------------
+  prototypes
+----------------------------------------------------------------------------*/
+#if SYS__MANAGER__CAN_BUS_ENABLED
+void srv__comms__can_init(uint8_t pinCS);
+void rxCanHandler();
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
+
+
+void srv__comms__process(sys__datastore_t dataStore);
+void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand);
+/*----------------------------------------------------------------------------
+  inlines
+----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------
+  compile time checks
+----------------------------------------------------------------------------*/
+
+#endif //CONTROLLER_V2_SRV__COMMS_H
 
 /*----------------------------------------------------------------------------
   End of file

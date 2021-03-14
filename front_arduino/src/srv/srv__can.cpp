@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file dev__can__mcp2515.h
-* @brief Device layer implementing the MCP2515 CAN Controller
+* @file srv__can.cpp
+* @brief CAN communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,22 +16,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-
 /*----------------------------------------------------------------------------
-  @brief
+  include files
 ----------------------------------------------------------------------------*/
-#ifndef CONTROLLER_V2_DEV__CAN__MCP2515_H
-#define CONTROLLER_V2_DEV__CAN__MCP2515_H
+#include "srv__can.h"
 
-/*----------------------------------------------------------------------------
-  nested include files
-----------------------------------------------------------------------------*/
-#include "Arduino.h"
+#include "../sys/sys__manager.h"
+#include "../sys/sys__datastore.h"
 
-/*----------------------------------------------------------------------------
-  macros
-----------------------------------------------------------------------------*/
-
+#include <SPI.h>
+#include <mcp2515.h>
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
@@ -41,24 +35,86 @@
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  extern variables
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-void dev__can__mcp2515__init(uint8_t pin);
 
 /*----------------------------------------------------------------------------
-  inlines
+  macros
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  compile time checks
+  global variables
 ----------------------------------------------------------------------------*/
-
-#endif // CONTROLLER_V2_DEV__CAN__MCP2515_H
+MCP2515 mcp2515(SYS__MANAGER__CAN_CS_PIN);  
 
 /*----------------------------------------------------------------------------
-  End of file
+  static variables
 ----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------
+  public functions
+----------------------------------------------------------------------------*/
+#if SYS__MANAGER__CAN_BUS_ENABLED
+/*************************************************************************//**
+* @brief Initialise MCP2515 CAN
+* @param uint8_t pinCS Pin number of connection to SPI CS of MCP2515
+* @return None
+* @note
+*****************************************************************************/
+void srv__comms__can_init(uint8_t pinCS)
+{  
+    mcp2515.reset();                  
+    mcp2515.setBitrate(CAN_125KBPS);  
+    mcp2515.setNormalMode();          // Send and recieve mode
+}
+
+
+/*----------------------------------------------------------------------------
+  private functions
+----------------------------------------------------------------------------*/
+
+/*************************************************************************//**
+* @brief Communications service process loop
+* @param sys__datastore_t dataStore
+* @param uint8_t canID
+* @return None
+* @note
+*****************************************************************************/
+void srv__comms__process(sys__datastore_t dataStore)
+{ 
+
+  srv__comms__can_tx(dataStore, SRV__COMMS__CMD_WHEEL_SPEED);
+
+}
+
+
+/*************************************************************************//**
+* @brief Communications service process loop
+* @param None
+* @return None
+* @note
+*****************************************************************************/
+void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand)
+{ 
+  struct can_frame msg;
+  msg.can_id  = SYS__MANAGER__CAN_ID;
+  msg.can_dlc = 5;      // Send 8 bytes (max)
+
+  switch(canCommand){
+    case SRV__COMMS__CMD_WHEEL_SPEED:
+      msg.data[0] = SRV__COMMS__CMD_WHEEL_SPEED;
+      msg.data[1] = sys__datastore.wheelSpeed.data & 0xFF;
+      msg.data[2] = (sys__datastore.wheelSpeed.data>>8) & 0xFF;
+      msg.data[3] = (sys__datastore.wheelSpeed.data>>16) & 0xFF;
+      msg.data[4] = (sys__datastore.wheelSpeed.data>>24) & 0xFF;
+      break;
+  }
+
+  mcp2515.sendMessage(&msg);  
+
+}
+
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
+
+
+
