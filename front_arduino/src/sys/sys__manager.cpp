@@ -21,7 +21,7 @@
 ----------------------------------------------------------------------------*/
 #include "sys__manager.h"
 #include "../srv/srv__daq.h"
-#include "../srv/srv__can.h"
+#include "../srv/srv__comms.h"
 
 #include "sys__datastore.h"
 
@@ -64,7 +64,7 @@ sys__datastore_t sys__datastore;
 *****************************************************************************/
 void sys__manager__init()
 {
-
+/*
     // Initialise Sensors
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
     srv__daq__damper_pots_init(SYS__MANAGER__DAMPER_POT_PIN);
@@ -78,7 +78,7 @@ void sys__manager__init()
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
     srv__daq__ride_height_init(SYS__MANAGER__RIDE_HEIGHT_PIN);
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
+#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED */
 
 #if SYS__MANAGER__WHEEL_SPEED_ENABLED
     srv__daq__wheel_speed_init(SYS__MANAGER__WHEEL_SPEED_PIN);
@@ -102,6 +102,7 @@ void sys__manager__process()
 {
     srv__daq__process(sys__datastore);
     srv__comms__process(sys__datastore);
+    delay(1000);
 }
 /*----------------------------------------------------------------------------
   private functions

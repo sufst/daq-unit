@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file srv__can.h
-* @brief Communications service layer
+* @file dev__can__mcp2515.h
+* @brief Device layer implementing the MCP2515 CAN Controller
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,21 +16,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
+
 /*----------------------------------------------------------------------------
   @brief
 ----------------------------------------------------------------------------*/
+#ifndef CONTROLLER_V2_DEV__CAN__MCP2515_H
+#define CONTROLLER_V2_DEV__CAN__MCP2515_H
 
-#ifndef CONTROLLER_V2_SRV__COMMS_H
-#define CONTROLLER_V2_SRV__COMMS_H
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
 #include "Arduino.h"
-
-#include <stdint.h>
-
-#include "../sys/sys__manager.h"
 #include "../sys/sys__datastore.h"
+
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -44,36 +42,29 @@
 ----------------------------------------------------------------------------*/
 typedef enum
 {
-    SRV__COMMS__CMD_DAMPER_1 = 0x01,
-    SRV__COMMS__CMD_DAMPER_2,
-    SRV__COMMS__CMD_ACCELEROMETER_X_1,
-    SRV__COMMS__CMD_ACCELEROMETER_Y_1,
-    SRV__COMMS__CMD_ACCELEROMETER_Z_1,
-    SRV__COMMS__CMD_ACCELEROMETER_X_2,
-    SRV__COMMS__CMD_ACCELEROMETER_Y_2,
-    SRV__COMMS__CMD_ACCELEROMETER_Z_2,
-    SRV__COMMS__CMD_RIDE_HEIGHT,
-    SRV__COMMS__CMD_WHEEL_SPEED_1,
-    SRV__COMMS__CMD_WHEEL_SPEED_2,
-    SRV__COMMS__CMD_FUEL_FLOW,
-    SRV__COMMS__CMD_TIME_STAMP
-} srv__comms__cmd_t;
+    DEV__CAN__CMD_DAMPER = 0x01,
+    DEV__CAN__CMD_ACCELEROMETER_X,
+    DEV__CAN__CMD_ACCELEROMETER_Y,
+    DEV__CAN__CMD_ACCELEROMETER_Z,
+    DEV__CAN__CMD_RIDE_HEIGHT,
+    DEV__CAN__CMD_WHEEL_SPEED,
+    DEV__CAN__CMD_TIME_STAMP
+} dev__can__cmd_t;
+
 
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
-extern srv__comms__cmd_t srv__comms_cmd;
+extern dev__can__cmd_t dev__can_cmd;
+
+
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__CAN_BUS_ENABLED
-void srv__comms__can_init(uint8_t pinCS);
-void rxCanHandler();
-#endif // SYS__MANAGER__CAN_BUS_ENABLED
+void dev__can__mcp2515__init();
+void dev__can__mcp2515_rx(sys__datastore_t dataStore);
+static float dev__can__mcp2515_bytes_2_float(uint8_t byteArray[]);
 
-
-void srv__comms__process(sys__datastore_t dataStore);
-void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand);
 /*----------------------------------------------------------------------------
   inlines
 ----------------------------------------------------------------------------*/
@@ -82,7 +73,7 @@ void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand);
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif //CONTROLLER_V2_SRV__COMMS_H
+#endif // CONTROLLER_V2_DEV__CAN__MCP2515_H
 
 /*----------------------------------------------------------------------------
   End of file

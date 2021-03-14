@@ -64,8 +64,10 @@ void dev__wheel__speed__init(dev__wheel__speed__obj_t* obj);
 *****************************************************************************/
 inline uint32_t dev__wheel_speed__read_uv(dev__wheel__speed__obj_t *obj)
 {
-  uint32_t adcRaw = analogRead(obj->pin);
-  return (adcRaw * obj->conversionRate);
+  //uint32_t adcRaw = analogRead(obj->pin);
+  static uint32_t var = 0;
+  //return (adcRaw * obj->conversionRate);
+  return var++;
 }
 
 /*----------------------------------------------------------------------------

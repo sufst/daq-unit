@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file dev__ride__height.cpp
-* @brief Ride height sensor device layer
+* @file dev__can__mcp2515.h
+* @brief Device layer implementing the MCP2515 CAN Controller
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,56 +16,62 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-/*----------------------------------------------------------------------------
-  include files
-----------------------------------------------------------------------------*/
-#include "dev__ride__height.h"
 
 /*----------------------------------------------------------------------------
-  manifest constants
+  @brief
 ----------------------------------------------------------------------------*/
-#define DEV__RIDE__HEIGHT__ADC_CONVERSION_UV 488
+#ifndef CONTROLLER_V2_DEV__CAN__MCP2515_H
+#define CONTROLLER_V2_DEV__CAN__MCP2515_H
 
 /*----------------------------------------------------------------------------
-  type definitions
+  nested include files
 ----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  prototypes
-----------------------------------------------------------------------------*/
+#include "Arduino.h"
+#include "../sys/sys__datastore.h"
 
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  global variables
+  manifest constants
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  static variables
+  type definitions
 ----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  public functions
-----------------------------------------------------------------------------*/
-/*************************************************************************//**
-* @brief Initialise the ride height sensor pins
-* @param dev__ride__height__obj_t *obj Ride height sensor device object
-* @return None
-* @note
-*****************************************************************************/
-void dev__ride__height__init(dev__ride__height__obj_t *obj)
+typedef enum
 {
-    pinMode(obj->pin, INPUT_PULLUP);
-    obj->conversionRate = DEV__RIDE__HEIGHT__ADC_CONVERSION_UV;
-}
+    DEV__CAN__CMD_DAMPER = 0x01,
+    DEV__CAN__CMD_ACCELEROMETER_X,
+    DEV__CAN__CMD_ACCELEROMETER_Y,
+    DEV__CAN__CMD_ACCELEROMETER_Z,
+    DEV__CAN__CMD_RIDE_HEIGHT,
+    DEV__CAN__CMD_WHEEL_SPEED,
+    DEV__CAN__CMD_TIME_STAMP
+} dev__can__cmd_t;
 
 /*----------------------------------------------------------------------------
-  private functions
+  extern variables
 ----------------------------------------------------------------------------*/
+extern dev__can__cmd_t dev__can_cmd;
+
+/*----------------------------------------------------------------------------
+  prototypes
+----------------------------------------------------------------------------*/
+void dev__can__mcp2515__init();
+void dev__can__mcp2515_tx(sys__datastore_t dataStore, uint8_t canCommand);
+
+/*----------------------------------------------------------------------------
+  inlines
+----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------
+  compile time checks
+----------------------------------------------------------------------------*/
+
+#endif // CONTROLLER_V2_DEV__CAN__MCP2515_H
 
 /*----------------------------------------------------------------------------
   End of file
 ----------------------------------------------------------------------------*/
-

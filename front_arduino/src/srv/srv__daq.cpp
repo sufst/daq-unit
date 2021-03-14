@@ -23,7 +23,7 @@
 
 #include "../sys/sys__manager.h"
 #include "../sys/sys__datastore.h"
-
+/*
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
 #include "../dev/dev__damper__pots.h"
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
@@ -34,7 +34,7 @@
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
 #include "../dev/dev__ride__height.h"
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
+#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED */
 
 #if SYS__MANAGER__WHEEL_SPEED_ENABLED
 #include "../dev/dev__wheel__speed.h"
@@ -64,7 +64,7 @@
 /*----------------------------------------------------------------------------
   static variables
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
+/*#if SYS__MANAGER__DAMPER_POTS_ENABLED
 static dev__damper__pots__obj_t dev__damper__pots__obj;
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
@@ -74,7 +74,7 @@ static dev__accelerometer__obj_t dev__accelerometer__obj;
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
 static dev__ride__height__obj_t dev__ride__height__obj;
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
+#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED */
 
 #if SYS__MANAGER__WHEEL_SPEED_ENABLED
 static dev__wheel__speed__obj_t dev__wheel__speed__obj;
@@ -83,55 +83,6 @@ static dev__wheel__speed__obj_t dev__wheel__speed__obj;
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-/*************************************************************************//**
-* @brief Initialise damper pots
-* @param uint16_t ms Damper pots daq frequency
-* @param uint8_t *pins Damper pot pins
-* @return None
-* @note
-*****************************************************************************/
-void srv__daq__damper_pots_init(uint8_t pin)
-{
-    dev__damper__pots__obj.pin = pin;
-    dev__damper__pots__init(&dev__damper__pots__obj);    
-}
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__ACCELEROMETER_ENABLED
-/*************************************************************************//**
-* @brief Initialise accelerometer
-* @param uint8_t pinX Accelerometer x-axis pin
-* @param uint8_t pinY Accelerometer y-axis pin
-* @param uint8_t pinZ Accelerometer z-axis pin
-* @return None
-* @note
-*****************************************************************************/
-void srv__daq__accelerometer_init(uint8_t pinX, uint8_t pinY, uint8_t pinZ)
-{
-    dev__accelerometer__obj.pinX = pinX;
-    dev__accelerometer__obj.pinY = pinY;
-    dev__accelerometer__obj.pinZ = pinZ;
-    dev__accelerometer__init(&dev__accelerometer__obj);
-}
-#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
-
-
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-/*************************************************************************//**
-* @brief Initialise ride height sensor
-* @param uint8_t pins Ride height pin
-* @return None
-* @note
-*****************************************************************************/
-void srv__daq__ride_height_init(uint8_t pin)
-{
-    dev__ride__height__obj.pin = pin;
-    dev__ride__height__init(&dev__ride__height__obj);
-}
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-
 #if SYS__MANAGER__WHEEL_SPEED_ENABLED
 /*************************************************************************//**
 * @brief Initialise wheel speed sensor
@@ -158,17 +109,6 @@ void srv__daq__wheel_speed_init(uint8_t pin)
 *****************************************************************************/
 void srv__daq__process(sys__datastore_t dataStore)
 { 
-  // Read damper pots
-  dataStore.damperPots.data = dev__damper__pots__read_pot_uv(&dev__damper__pots__obj);
-
-  // Read accelerometer
-  dataStore.accelerometer.dataX = dev__accelerometer_x__read_uv(&dev__accelerometer__obj);
-  dataStore.accelerometer.dataY = dev__accelerometer_y__read_uv(&dev__accelerometer__obj);
-  dataStore.accelerometer.dataZ = dev__accelerometer_z__read_uv(&dev__accelerometer__obj);
-
-  // Read ride height
-  dataStore.rideHeight.data = dev__ride__height__read_uv(&dev__ride__height__obj);
-
   // Read wheel speed
   dataStore.wheelSpeed.data = dev__wheel_speed__read_uv(&dev__wheel__speed__obj);
 

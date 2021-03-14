@@ -52,7 +52,7 @@
 
 #define SYS__MANAGER__CAN_BUS_ENABLED 1
 #define SYS__MANAGER__CAN_ID 7
-#define SYS__MANAGER__CAN_CS_PIN 8
+#define SYS__MANAGER__CAN_CS_PIN 7
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/

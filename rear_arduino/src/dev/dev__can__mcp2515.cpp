@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file srv__can.cpp
-* @brief DAQ service layer
+* @file dev__can__mcp2515.cpp
+* @brief Device layer implementing the MCP2515 CAN Controller
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,19 +16,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
+
 /*----------------------------------------------------------------------------
   include files
 ----------------------------------------------------------------------------*/
-#include "srv__can.h"
-
-#include "../sys/sys__manager.h"
-#include "../sys/sys__datastore.h"
-
-#if SYS__MANAGER__CAN_BUS_ENABLED
 #include <SPI.h>
 #include <mcp2515.h>
-#include "srv__can.h"
-#endif SYS__MANAGER__CAN_BUS_ENABLED
+#include <math.h>
+
+#include "dev__can__mcp2515.h"
+#include "../sys/sys__manager.h"
+
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
@@ -49,7 +47,13 @@
   global variables
 ----------------------------------------------------------------------------*/
 MCP2515 mcp2515(SYS__MANAGER__CAN_CS_PIN);  
-bool interrupt = false;
+bool canIntrr = false;
+
+union 
+{
+  float data;
+  uint8_t dataBytes[4]; // Little Endian
+}dev__can_data;
 
 /*----------------------------------------------------------------------------
   static variables
@@ -58,65 +62,23 @@ bool interrupt = false;
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__CAN_BUS_ENABLED
-void rxCanHandler() {
-    interrupt = true;
+void dev__can__mcp2515__irq_handler(){
+    canIntrr = true;
 }
 
 /*************************************************************************//**
-* @brief Initialise MCP2515 CAN
-* @param uint8_t pinCS Pin number of connection to SPI CS of MCP2515
+* @brief Initialise the wheel speed sensor
+* @param dev__wheel__speed__obj_t* obj Wheel speed device object
 * @return None
 * @note
 *****************************************************************************/
-void srv__comms__can_init(uint8_t pinCS)
-{  
-  mcp2515.reset();
-  mcp2515.setBitrate(CAN_125KBPS);
-  mcp2515.setNormalMode();
-
+void dev__can__mcp2515__init()
+{
+    mcp2515.reset();                  
+    mcp2515.setBitrate(CAN_125KBPS);  
+    mcp2515.setNormalMode();          // Send and recieve mode
+    attachInterrupt(SYS__MANAGER__CAN_INT_PIN, dev__can__mcp2515__irq_handler, FALLING);
 }
-
-
-/*----------------------------------------------------------------------------
-  private functions
-----------------------------------------------------------------------------*/
-
-/*************************************************************************//**
-* @brief Communications service process loop
-* @param sys__datastore_t dataStore
-* @param uint8_t canID
-* @return None
-* @note
-*****************************************************************************/
-void srv__comms__process(sys__datastore_t dataStore)
-{ 
-  struct can_frame rxFrame;
-
-  if (interrupt) {
-    interrupt = false;
-
-    uint8_t irq = mcp2515.getInterrupts();
-
-    if (irq & MCP2515::CANINTF_RX0IF) {
-      if (mcp2515.readMessage(MCP2515::RXB0, &rxFrame) == MCP2515::ERROR_OK) {
-        // frame contains received from RXB0 message
-        Serial.print(rxFrame.can_id, HEX); // print ID
-        Serial.print(" "); 
-        Serial.println(rxFrame.can_dlc, HEX); // print DLC
-  
-        for (int i = 0; i<rxFrame.can_dlc; i++)  {  // print the data
-          Serial.print(rxFrame.data[i],HEX);
-          Serial.print(" ");
-        }
-      }
-    }
-
-}
-
-
-}
-
 
 /*************************************************************************//**
 * @brief Communications service process loop
@@ -124,27 +86,76 @@ void srv__comms__process(sys__datastore_t dataStore)
 * @return None
 * @note
 *****************************************************************************/
-void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand)
+void dev__can__mcp2515_rx(sys__datastore_t dataStore)
 { 
-  struct can_frame msg;
-  msg.can_id  = SYS__MANAGER__CAN_ID;
-  msg.can_dlc = 5;      // Send 8 bytes (max)
 
-  switch(canCommand){
-    case SRV__COMMS__CMD_FUEL_FLOW:
-      msg.data[0] = SRV__COMMS__CMD_FUEL_FLOW;
-      msg.data[1] = sys__datastore.fuelFlow.data & 0xFF;
-      msg.data[2] = (sys__datastore.fuelFlow.data>>8) & 0xFF;
-      msg.data[3] = (sys__datastore.fuelFlow.data>>16) & 0xFF;
-      msg.data[4] = (sys__datastore.fuelFlow.data>>24) & 0xFF;
-      break;
+  if(canIntrr){
+    canIntrr = false;
+
+    can_frame frameRx;
+    uint8_t irq = mcp2515.getInterrupts();
+    unsigned char idRx;
+
+    if (irq & MCP2515::CANINTF_RX0IF) {
+      if (mcp2515.readMessage(MCP2515::RXB0, &frameRx) == MCP2515::ERROR_OK) {
+        idRx = frameRx.can_id;
+        uint8_t commandByteRx;
+
+        commandByteRx = frameRx.data[0];
+        for(int i=0; i<frameRx.can_dlc; i++)
+          dev__can_data.dataBytes[i] = frameRx.data[i+1];  // First byte of data is command
+          
+        switch(commandByteRx){
+          case DEV__CAN__CMD_WHEEL_SPEED:
+            dataStore.wheelSpeeds[0].data = dev__can_data.data;
+        }
+
+        Serial.print("Recieved: ");
+        Serial.print(idRx);
+        Serial.print(" ");
+        Serial.print(commandByteRx);
+        Serial.print(" ");
+        for(int i=0; i<frameRx.can_dlc; i++){
+          Serial.print(dev__can_data.dataBytes[i]);
+          Serial.print(" ");
+        }
+        Serial.println();
+      }
+      if (irq & MCP2515::CANINTF_RX1IF) {
+        if (mcp2515.readMessage(MCP2515::RXB1, &frameRx) == MCP2515::ERROR_OK) {
+          idRx = frameRx.can_id;
+          uint8_t dataBytesRx[sizeof(float)];
+          uint8_t commandByteRx;
+
+          commandByteRx = frameRx.data[0];
+          for(int i=0; i<frameRx.can_dlc; i++)
+            dev__can_data.dataBytes[i] = frameRx.data[i+1];  // First byte of data is command
+                
+          switch(commandByteRx){
+            case DEV__CAN__CMD_WHEEL_SPEED:
+              dataStore.wheelSpeeds[0].data = dev__can_data.data;
+          }
+
+          Serial.print("Recieved: ");
+          Serial.print(idRx);
+          Serial.print(" ");
+          Serial.print(commandByteRx);
+          Serial.print(" ");
+          for(int i=0; i<frameRx.can_dlc; i++){
+            Serial.print(dev__can_data.dataBytes[i]);
+            Serial.print(" ");
+          }
+          Serial.println();
+        }
+      }
+    }
   }
-
-  mcp2515.sendMessage(&msg);  
-
 }
+/*----------------------------------------------------------------------------
+  private functions
+----------------------------------------------------------------------------*/
 
-#endif // SYS__MANAGER__CAN_BUS_ENABLED
 
-
-
+/*----------------------------------------------------------------------------
+  End of file
+----------------------------------------------------------------------------*/

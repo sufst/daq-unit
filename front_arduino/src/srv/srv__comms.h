@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file dev__accelerometer.h
-* @brief device layer for linear 0-5V brake pressure sensor
+* @file srv__comms.h
+* @brief CAN communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,56 +16,56 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-
 /*----------------------------------------------------------------------------
-  include files
+  @brief
 ----------------------------------------------------------------------------*/
-#include "dev__accelerometer.h"
+
+#ifndef CONTROLLER_V2_SRV__COMMS_H
+#define CONTROLLER_V2_SRV__COMMS_H
+/*----------------------------------------------------------------------------
+  nested include files
+----------------------------------------------------------------------------*/
+#include "Arduino.h"
+
+#include <stdint.h>
+
+#include "../sys/sys__manager.h"
+#include "../sys/sys__datastore.h"
+/*----------------------------------------------------------------------------
+  macros
+----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
-#define DEV__ACCELEROMETER__ADC_CONVERSION_UV 488
 
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
+  extern variables
+----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
+#if SYS__MANAGER__CAN_BUS_ENABLED
+void srv__comms__can_init(uint8_t pinCS);
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
+
+
+void srv__comms__process(sys__datastore_t dataStore);
+void srv__comms__can_tx(sys__datastore_t dataStore, uint8_t canCommand);
+/*----------------------------------------------------------------------------
+  inlines
+----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  macros
+  compile time checks
 ----------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------
-  global variables
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  static variables
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  public functions
-----------------------------------------------------------------------------*/
-/*************************************************************************//**
-* @brief Initialise the accelerometer
-* @param dev__accelerometer__obj_t* obj Accelerometer device object
-* @return None
-* @note
-*****************************************************************************/
-void dev__accelerometer__init(dev__accelerometer__obj_t* obj)
-{
-    pinMode(obj->pinX, INPUT_PULLUP);
-    pinMode(obj->pinY, INPUT_PULLUP);
-    pinMode(obj->pinZ, INPUT_PULLUP);
-    obj->conversionRate = DEV__ACCELEROMETER__ADC_CONVERSION_UV;
-}
-/*----------------------------------------------------------------------------
-  private functions
-----------------------------------------------------------------------------*/
+#endif //CONTROLLER_V2_SRV__COMMS_H
 
 /*----------------------------------------------------------------------------
   End of file

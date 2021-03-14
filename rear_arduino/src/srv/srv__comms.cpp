@@ -1,8 +1,6 @@
 /*************************************************************************//**
-* @file util__checksum.h
-* @brief Implementation of checksums for communications
-* @note
-* @author nrs1g15@soton.ac.uk
+* @file srv__comms.cpp
+* @brief DAQ service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,24 +14,18 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
 /*----------------------------------------------------------------------------
-  @brief
+  include files
 ----------------------------------------------------------------------------*/
+#include "../sys/sys__manager.h"
+#include "../sys/sys__datastore.h"
+#include "srv__comms.h"
 
-#ifndef UTIL__CHECKSUM_H
-#define UTIL__CHECKSUM_H
-
-/*----------------------------------------------------------------------------
-  nested include files
-----------------------------------------------------------------------------*/
-#include "Arduino.h"
-
-/*----------------------------------------------------------------------------
-  macros
-----------------------------------------------------------------------------*/
-
+#if SYS__MANAGER__CAN_BUS_ENABLED
+#include "../dev/dev__can__mcp2515.h"
+#endif SYS__MANAGER__CAN_BUS_ENABLED
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
@@ -43,22 +35,58 @@
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  extern variables
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-uint8_t util__checksum__get_crc8(void *data, uint8_t len);
-uint8_t util__checksum__update_crc8(uint8_t crc, uint8_t input);
 
 /*----------------------------------------------------------------------------
-  inlines
+  macros
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-  compile time checks
+  global variables
 ----------------------------------------------------------------------------*/
 
+/*----------------------------------------------------------------------------
+  static variables
+----------------------------------------------------------------------------*/
 
-#endif //UTIL__CHECKSUM_H
+/*----------------------------------------------------------------------------
+  public functions
+----------------------------------------------------------------------------*/
+#if SYS__MANAGER__CAN_BUS_ENABLED
+
+/*************************************************************************//**
+* @brief Initialise MCP2515 CAN
+* @param uint8_t pinCS Pin number of connection to SPI CS of MCP2515
+* @return None
+* @note
+*****************************************************************************/
+void srv__comms__can_init()
+{  
+  dev__can__mcp2515__init();
+
+}
+
+
+/*----------------------------------------------------------------------------
+  private functions
+----------------------------------------------------------------------------*/
+
+/*************************************************************************//**
+* @brief Communications service process loop
+* @param sys__datastore_t dataStore
+* @param uint8_t canID
+* @return None
+* @note
+*****************************************************************************/
+void srv__comms__process(sys__datastore_t dataStore)
+{ 
+  dev__can__mcp2515_rx(dataStore);
+
+}
+
+
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
+
+
+

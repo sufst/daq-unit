@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file dev__accelerometer.h
-* @brief device layer for accelerometer
+* @file srv__comms.h
+* @brief Communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,18 +16,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-
 /*----------------------------------------------------------------------------
   @brief
 ----------------------------------------------------------------------------*/
-#ifndef CONTROLLER_V2_DEV__ACCELEROMETER_H
-#define CONTROLLER_V2_DEV__ACCELEROMETER_H
 
+#ifndef CONTROLLER_V2_SRV__COMMS_H
+#define CONTROLLER_V2_SRV__COMMS_H
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
 #include "Arduino.h"
 
+#include <stdint.h>
+
+#include "../sys/sys__manager.h"
+#include "../sys/sys__datastore.h"
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -39,70 +42,42 @@
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
-typedef struct
+typedef enum
 {
-    uint8_t pinX; // X-axis
-    uint8_t pinY; // Y-axis
-    uint8_t pinZ; // Z-axis
-    uint32_t conversionRate;
-} dev__accelerometer__obj_t;
+    SRV__COMMS__CMD_DAMPER_1 = 0x01,
+    SRV__COMMS__CMD_DAMPER_2,
+    SRV__COMMS__CMD_ACCELEROMETER_X_1,
+    SRV__COMMS__CMD_ACCELEROMETER_Y_1,
+    SRV__COMMS__CMD_ACCELEROMETER_Z_1,
+    SRV__COMMS__CMD_ACCELEROMETER_X_2,
+    SRV__COMMS__CMD_ACCELEROMETER_Y_2,
+    SRV__COMMS__CMD_ACCELEROMETER_Z_2,
+    SRV__COMMS__CMD_RIDE_HEIGHT,
+    SRV__COMMS__CMD_WHEEL_SPEED_1,
+    SRV__COMMS__CMD_WHEEL_SPEED_2,
+    SRV__COMMS__CMD_FUEL_FLOW,
+    SRV__COMMS__CMD_TIME_STAMP
+} srv__comms__cmd_t;
+
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
-
+extern srv__comms__cmd_t srv__comms_cmd;
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-void dev__accelerometer__init(dev__accelerometer__obj_t *obj);
+void srv__comms__can_init();
+void srv__comms__process(sys__datastore_t dataStore);
 
 /*----------------------------------------------------------------------------
   inlines
 ----------------------------------------------------------------------------*/
-/*************************************************************************//**
-* @brief Read the x-axis of accelerometer pin voltage in micro volts
-* @param dev__accelerometer__obj_t *obj Accelerometer device object
-* @return uint32_t Voltage in uV
-* @note
-*****************************************************************************/
-inline uint32_t dev__accelerometer_x__read_uv(dev__accelerometer__obj_t *obj)
-{
-    //uint32_t adcRaw = analogRead(obj->pin);
-    //return (adcRaw * obj->conversionRate);
-
-    uint32_t adcRawX = analogRead(obj->pinX); 
-    return(adcRawX * obj->conversionRate);
-}
-
-/*************************************************************************//**
-* @brief Read the y-axis of accelerometer pin voltage in micro volts
-* @param dev__accelerometer__obj_t *obj Accelerometer device object
-* @return uint32_t Voltage in uV
-* @note
-*****************************************************************************/
-inline uint32_t dev__accelerometer_y__read_uv(dev__accelerometer__obj_t *obj)
-{
-    uint32_t adcRawY = analogRead(obj->pinY); 
-    return(adcRawY * obj->conversionRate);
-}
-
-/*************************************************************************//**
-* @brief Read the z-axis of accelerometer pin voltage in micro volts
-* @param dev__accelerometer__obj_t *obj Accelerometer device object
-* @return uint32_t Voltage in uV
-* @note
-*****************************************************************************/
-inline uint32_t dev__accelerometer_z__read_uv(dev__accelerometer__obj_t *obj)
-{
-    uint32_t adcRawZ = analogRead(obj->pinZ); 
-    return(adcRawZ * obj->conversionRate);
-}
-
 
 /*----------------------------------------------------------------------------
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif // CONTROLLER_V2_DEV__ACCELEROMETER_H
+#endif //CONTROLLER_V2_SRV__COMMS_H
 
 /*----------------------------------------------------------------------------
   End of file

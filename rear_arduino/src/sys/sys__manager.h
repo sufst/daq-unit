@@ -63,6 +63,7 @@
 #define SYS__MANAGER__CAN_BUS_ENABLED 1
 #define SYS__MANAGER__CAN_ID 13
 #define SYS__MANAGER__CAN_CS_PIN 14
+#define SYS__MANAGER__CAN_INT_PIN 7
 
 /*----------------------------------------------------------------------------
   type definitions
