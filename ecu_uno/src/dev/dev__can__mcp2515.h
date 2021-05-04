@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file sys__datastore.h
-* @brief System datastore
+* @file dev__can__mcp2515.h
+* @brief Device layer implementing the MCP2515 CAN Controller
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,17 +16,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
+
 /*----------------------------------------------------------------------------
   @brief
 ----------------------------------------------------------------------------*/
-#ifndef CONTROLLER_V2_SYS__DATASTORE_H
-#define CONTROLLER_V2_SYS__DATASTORE_H
+#ifndef CONTROLLER_V2_DEV__CAN__MCP2515_H
+#define CONTROLLER_V2_DEV__CAN__MCP2515_H
+
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
 #include "Arduino.h"
-
-#include "sys__manager.h"
+#include "../sys/sys__datastore.h"
 
 /*----------------------------------------------------------------------------
   macros
@@ -39,86 +40,40 @@
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-typedef struct
+typedef enum
 {
-    uint8_t tag;
-    uint32_t timestamp;
-    uint32_t data;
-} sys__datastore__damper_pots_save_t;
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
+    DEV__CAN__CMD_DAMPER = 0x01,
+    DEV__CAN__CMD_ACCELEROMETER_X,
+    DEV__CAN__CMD_ACCELEROMETER_Y,
+    DEV__CAN__CMD_ACCELEROMETER_Z,
+    DEV__CAN__CMD_RIDE_HEIGHT,
+    DEV__CAN__CMD_WHEEL_SPEED,
+    DEV__CAN__CMD_TIME_STAMP
+} dev__can__cmd_t;
 
-#if SYS__MANAGER__ACCELEROMETERS_ENABLED
-typedef struct
+typedef enum
 {
-    uint8_t tag;
-    uint32_t dataX;
-    uint32_t dataY;
-    uint32_t dataZ;
-    uint32_t timestamp;
-} sys__datastore__accelerometer_save_t;
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
-
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-typedef struct
-{
-    uint8_t tag;
-    uint32_t data;
-    uint32_t timestamp;
-} sys__datastore__ride_height_save_t;
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-#if SYS__MANAGER__WHEEL_SPEEDS_ENABLED
-typedef struct
-{
-    uint8_t tag;
-    uint32_t data;
-    uint32_t timestamp;
-} sys__datastore__wheel_speed_save_t;
-#endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
-
-#if SYS__MANAGER__FUEL_FLOW_ENABLED
-typedef struct
-{
-    uint8_t tag;
-    uint32_t data;
-    uint32_t timestamp;
-} sys__datastore__fuel_flow_save_t;
-#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
-
-typedef struct
-{
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-    // element0=left, element1=right
-    sys__datastore__damper_pots_save_t damperPots[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT];
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__ACCELEROMETERS_ENABLED
-    // element0=left, element1=right
-    sys__datastore__accelerometer_save_t accelerometers[SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT];
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
-
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-    sys__datastore__ride_height_save_t rideHeight;
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-#if SYS__MANAGER__WHEEL_SPEEDS_ENABLED
-    sys__datastore__wheel_speed_save_t wheelSpeeds[SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT];
-#endif // SYS__MANAGER__WHEEL_SPEEDS_ENABLED
-
-#if SYS__MANAGER__FUEL_FLOW_ENABLED
-    sys__datastore__fuel_flow_save_t fuelFlow;
-#endif // SYS__MANAGER__FUEL_FLOW_ENABLED
-} sys__datastore_t;
+    DEV__CAN__CMD_2000 = 0x2000,
+    DEV__CAN__CMD_2001,
+    DEV__CAN__CMD_2002,
+    DEV__CAN__CMD_2003,
+    DEV__CAN__CMD_2004,
+    DEV__CAN__CMD_2005,
+    DEV__CAN__CMD_2006,
+    DEV__CAN__CMD_2007
+} dev__can__ecu_id_t;
 
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
-extern sys__datastore_t sys__datastore;
+extern dev__can__cmd_t dev__can_cmd;
+extern dev__can__ecu_id_t dev__can_ecu_id;
 
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
+void dev__can__mcp2515__init();
+void dev__can__mcp2515_tx(sys__ecu_datastore_t dataStore, int ecuCanId);
 
 /*----------------------------------------------------------------------------
   inlines
@@ -128,7 +83,8 @@ extern sys__datastore_t sys__datastore;
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif //CONTROLLER_V2_SYS__DATASTORE_H
+#endif // CONTROLLER_V2_DEV__CAN__MCP2515_H
+
 /*----------------------------------------------------------------------------
   End of file
 ----------------------------------------------------------------------------*/

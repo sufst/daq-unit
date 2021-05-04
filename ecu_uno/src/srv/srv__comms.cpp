@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file sys__manager.cpp
-* @brief System manager 
+* @file srv__comms.cpp
+* @brief CAN communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -19,12 +19,15 @@
 /*----------------------------------------------------------------------------
   include files
 ----------------------------------------------------------------------------*/
-#include "sys__manager.h"
-#include "../srv/srv__daq.h"
-#include "../srv/srv__comms.h"
-#include "sys__datastore.h"
+#include "srv__comms.h"
+
+#include "../sys/sys__manager.h"
+#include "../sys/sys__datastore.h"
 
 
+#if SYS__MANAGER__CAN_BUS_ENABLED
+#include "../dev/dev__can__mcp2515.h"
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
@@ -37,7 +40,6 @@
   prototypes
 ----------------------------------------------------------------------------*/
 
-
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -45,7 +47,7 @@
 /*----------------------------------------------------------------------------
   global variables
 ----------------------------------------------------------------------------*/
-sys__datastore_t sys__datastore;
+
 
 /*----------------------------------------------------------------------------
   static variables
@@ -54,68 +56,54 @@ sys__datastore_t sys__datastore;
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
-
-/*************************************************************************//**
-* @brief Initialises the system
-* @param None
-* @return None
-* @note
-*****************************************************************************/
-void sys__manager__init()
-{
-  /*
-#if SYS__MANAGER__DAMPER_POTS_ENABLED
-    uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_1_PIN,
-                                                                   SYS__MANAGER__DAMPER_POT_2_PIN};
-    srv__daq__damper_pots_init(dampersPins);
-#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__ACCELEROMETERS_ENABLED
-    // 3 pins per accelerometer, x, y, z axis
-    uint8_t accelerometerPins[SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT*SYS__MANAGER__ACCELEROMETER_ATTACHED_PINS] 
-                                                                          = {SYS__MANAGER__ACCELEROMETER_X_1_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_Y_1_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_Z_1_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_X_2_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_Y_2_PIN,
-                                                                             SYS__MANAGER__ACCELEROMETER_Z_2_PIN};
-    srv__daq__accelerometers_init(accelerometerPins);
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
-
-#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
-    srv__daq__ride_height_init(SYS__MANAGER__RIDE_HEIGHT_PIN);
-#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
-
-#if SYS__MANAGER__FUEL_FLOW_ENABLED
-    srv__daq__fuel_flow_init(SYS__MANAGER__FUEL_FLOW_PIN);
-#endif // SYS__MANAGER__FUEL_FLOW_ENABLED */
-
-#if SYS__MANAGER__WHEEL_SPEEDS_ENABLED
-    uint8_t wheelSpeedPins[SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT] = {SYS__MANAGER__WHEEL_SPEED_1_PIN,
-                                                                       SYS__MANAGER__WHEEL_SPEED_2_PIN};
-    srv__daq__wheel_speeds_init(wheelSpeedPins);
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
-
-
 #if SYS__MANAGER__CAN_BUS_ENABLED
-    srv__comms__can_init();
-#endif //SYS__MANAGER__CAN_BUS_ENABLED
-
-    Serial.println("SYSTEM INIT FINISHED");
-}
-
 /*************************************************************************//**
-* @brief services loops
-* @param None
+* @brief Initialise MCP2515 CAN
+* @param uint8_t pinCS Pin number of connection to SPI CS of MCP2515
 * @return None
 * @note
 *****************************************************************************/
-void sys__manager__process()
-{
-    //srv__daq__process(sys__datastore);
-    srv__comms__process(sys__datastore);
-    delay(100);
+void srv__comms__can_init(uint8_t pinCS)
+{  
+  dev__can__mcp2515__init();
 }
+
+
+/*************************************************************************//**
+* @brief Communications service process loop
+* @param sys__datastore_t dataStore
+* @param uint8_t canID
+* @return None
+* @note
+*****************************************************************************/
+void srv__comms__process(sys__ecu_datastore_t dataStore)
+{ 
+
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2000);
+  delay(1000);
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2001);
+  delay(1000);
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2002);
+  delay(1000);
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2003);
+  delay(1000);
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2004);
+  delay(1000);
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2005);
+  delay(1000);
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2006);
+  delay(1000);
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2007);
+  delay(1000);
+  
+
+}
+
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
+
 /*----------------------------------------------------------------------------
   private functions
 ----------------------------------------------------------------------------*/
+
+
+

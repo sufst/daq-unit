@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file dev__can__mcp2515.cpp
-* @brief Device layer implementing the MCP2515 CAN Controller
+* @file sys__manager.cpp
+* @brief System manager 
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,15 +16,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-
 /*----------------------------------------------------------------------------
   include files
 ----------------------------------------------------------------------------*/
-#include <SPI.h>
-#include <mcp2515.h>
+#include "sys__manager.h"
+#include "../srv/srv__daq.h"
+#include "../srv/srv__comms.h"
+#include "sys__datastore.h"
 
-#include "dev__can__mcp2515.h"
-#include "../sys/sys__manager.h"
 
 /*----------------------------------------------------------------------------
   manifest constants
@@ -38,6 +37,7 @@
   prototypes
 ----------------------------------------------------------------------------*/
 
+
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -45,7 +45,8 @@
 /*----------------------------------------------------------------------------
   global variables
 ----------------------------------------------------------------------------*/
-MCP2515 mcp2515(SYS__MANAGER__CAN_CS_PIN);  
+sys__datastore_t sys__datastore;
+sys__ecu_datastore_t sys__ecu_datastore;
 
 /*----------------------------------------------------------------------------
   static variables
@@ -54,73 +55,67 @@ MCP2515 mcp2515(SYS__MANAGER__CAN_CS_PIN);
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
-/*************************************************************************//**
-* @brief Initialise the wheel speed sensor
-* @param dev__wheel__speed__obj_t* obj Wheel speed device object
-* @return None
-* @note
-*****************************************************************************/
-void dev__can__mcp2515__init()
-{
-    mcp2515.begin();                 
-    mcp2515.setBitrate(SYS__MANAGER__CAN_SPEED);  
-    mcp2515.setNormalMode();          // Send and recieve mode
-}
 
 /*************************************************************************//**
-* @brief Communications service process loop
+* @brief Initialises the system
 * @param None
 * @return None
 * @note
 *****************************************************************************/
-void dev__can__mcp2515_tx(sys__datastore_t dataStore, uint8_t ecuCanId)
-{ 
-  /*struct can_frame frameTx;
-  frameTx.can_id  = SYS__MANAGER__CAN_ID;
-  frameTx.can_dlc = 5;      // Send 8 bytes (max)
+void sys__manager__init()
+{
+  /*
+#if SYS__MANAGER__DAMPER_POTS_ENABLED
+    uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_1_PIN,
+                                                                   SYS__MANAGER__DAMPER_POT_2_PIN};
+    srv__daq__damper_pots_init(dampersPins);
+#endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
-  switch(canCommand){
-    case DEV__CAN__CMD_WHEEL_SPEED:
-      frameTx.data[0] = DEV__CAN__CMD_WHEEL_SPEED;
-      frameTx.data[1] = sys__datastore.wheelSpeed.data & 0xFF;
-      frameTx.data[2] = (sys__datastore.wheelSpeed.data>>8) & 0xFF;
-      frameTx.data[3] = (sys__datastore.wheelSpeed.data>>16) & 0xFF;
-      frameTx.data[4] = (sys__datastore.wheelSpeed.data>>24) & 0xFF;
-      break;
-  }*/
+#if SYS__MANAGER__ACCELEROMETERS_ENABLED
+    // 3 pins per accelerometer, x, y, z axis
+    uint8_t accelerometerPins[SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT*SYS__MANAGER__ACCELEROMETER_ATTACHED_PINS] 
+                                                                          = {SYS__MANAGER__ACCELEROMETER_X_1_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_Y_1_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_Z_1_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_X_2_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_Y_2_PIN,
+                                                                             SYS__MANAGER__ACCELEROMETER_Z_2_PIN};
+    srv__daq__accelerometers_init(accelerometerPins);
+#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
 
-  struct can_frame frameTx;
-  
-  switch(ecuCanId){
-    frameTx.can_dlc = 8;
-    case DEV__CAN__CMD_2000:
-      frameTx.can_id  = DEV__CAN__CMD_2000;
-      frameTx.data[0] = sys__ecu_datastore.x2000_data.rpm & 0xFF;
-      frameTx.data[1] = (sys__ecu_datastore.x2000_data.rpm>>8) & 0xFF;
-      frameTx.data[2] = sys__ecu_datastore.x2000_data.tps & 0xFF;
-      frameTx.data[3] = (sys__ecu_datastore.x2000_data.tps>>8) & 0xFF;
-      frameTx.data[4] = sys__ecu_datastore.x2000_data.waterTemp & 0xFF;
-      frameTx.data[5] = (sys__ecu_datastore.x2000_data.waterTemp>>8) & 0xFF;
-      frameTx.data[6] = sys__ecu_datastore.x2000_data.airTemp & 0xFF;
-      frameTx.data[7] = (sys__ecu_datastore.x2000_data.airTemp>>8) & 0xFF;
-      break;
-  }
+#if SYS__MANAGER__RIDE_HEIGHT_ENABLED
+    srv__daq__ride_height_init(SYS__MANAGER__RIDE_HEIGHT_PIN);
+#endif // SYS__MANAGER__RIDE_HEIGHT_ENABLED
 
-  
-  Serial.print("Send: ");
-  for(int i=0; i<frameTx.can_dlc; i++){
-    Serial.print(frameTx.data[i]);
-    Serial.print(" ");
-  }
-  Serial.println();
-  
-  mcp2515.sendMessage(&frameTx);  
+#if SYS__MANAGER__FUEL_FLOW_ENABLED
+    srv__daq__fuel_flow_init(SYS__MANAGER__FUEL_FLOW_PIN);
+#endif // SYS__MANAGER__FUEL_FLOW_ENABLED */
 
+#if SYS__MANAGER__WHEEL_SPEEDS_ENABLED
+    uint8_t wheelSpeedPins[SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT] = {SYS__MANAGER__WHEEL_SPEED_1_PIN,
+                                                                       SYS__MANAGER__WHEEL_SPEED_2_PIN};
+    srv__daq__wheel_speeds_init(wheelSpeedPins);
+#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
+
+
+#if SYS__MANAGER__CAN_BUS_ENABLED
+    srv__comms__can_init();
+#endif //SYS__MANAGER__CAN_BUS_ENABLED
+ 
+    
+}
+
+/*************************************************************************//**
+* @brief services loops
+* @param None
+* @return None
+* @note
+*****************************************************************************/
+void sys__manager__process()
+{
+    //srv__daq__process(sys__datastore);
+    srv__comms__process(sys__datastore);
 }
 /*----------------------------------------------------------------------------
   private functions
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  End of file
 ----------------------------------------------------------------------------*/

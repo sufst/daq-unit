@@ -22,7 +22,8 @@
 
 void setup()
 {
-    //Initialise the system
+    //Initialise the system   
+    Serial.begin(9600);
     sys__manager__init();
 }
 
@@ -30,4 +31,5 @@ void loop()
 {
     // Loop the system
     sys__manager__process();
+
 }

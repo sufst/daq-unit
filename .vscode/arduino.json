@@ -1,6 +1,0 @@
-{
-    "programmer": "AVR ISP",
-    "board": "arduino:samd:mkrzero",
-    "sketch": "front_arduino/front_arduino.ino",
-    "port": "COM5"
-}

@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file sys__manager.h
-* @brief Main system application
+* @file dev__can__mcp2515.h
+* @brief Device layer implementing the MCP2515 CAN Controller
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,16 +16,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
+
 /*----------------------------------------------------------------------------
-  @brief sys__manager.h holds all the common configurable compile options for the system
+  @brief
 ----------------------------------------------------------------------------*/
-#ifndef SYS__MANAGER_H
-#define SYS__MANAGER_H
+#ifndef CONTROLLER_V2_DEV__CAN__MCP2515_H
+#define CONTROLLER_V2_DEV__CAN__MCP2515_H
 
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
-//#include "Arduino.h"
+#include "Arduino.h"
+#include "../sys/sys__datastore.h"
 
 /*----------------------------------------------------------------------------
   macros
@@ -34,51 +36,47 @@
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
-#define SYS__MANAGER__DAMPER_POTS_ENABLED 1
-#define SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT 2
-#define SYS__MANAGER__DAMPER_POT_1_PIN 1
-#define SYS__MANAGER__DAMPER_POT_2_PIN 2
-
-#define SYS__MANAGER__ACCELEROMETERS_ENABLED 1
-#define SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT 2
-#define SYS__MANAGER__ACCELEROMETER_ATTACHED_PINS 3
-#define SYS__MANAGER__ACCELEROMETER_X_1_PIN 3
-#define SYS__MANAGER__ACCELEROMETER_Y_1_PIN 4
-#define SYS__MANAGER__ACCELEROMETER_Z_1_PIN 5
-#define SYS__MANAGER__ACCELEROMETER_X_2_PIN 6
-#define SYS__MANAGER__ACCELEROMETER_Y_2_PIN 7
-#define SYS__MANAGER__ACCELEROMETER_Z_2_PIN 8
-
-#define SYS__MANAGER__RIDE_HEIGHT_ENABLED 1
-#define SYS__MANAGER__RIDE_HEIGHT_PIN 9
-
-#define SYS__MANAGER__WHEEL_SPEEDS_ENABLED 1
-#define SYS__MANAGER__WHEEL_SPEEDS_ATTACHED_AMT 2
-#define SYS__MANAGER__WHEEL_SPEED_1_PIN 10
-#define SYS__MANAGER__WHEEL_SPEED_2_PIN 11
-
-#define SYS__MANAGER__FUEL_FLOW_ENABLED 1
-#define SYS__MANAGER__FUEL_FLOW_PIN 12
-
-#define SYS__MANAGER__CAN_BUS_ENABLED 1
-#define SYS__MANAGER__CAN_ID 13
-#define SYS__MANAGER__CAN_CS_PIN 14
-#define SYS__MANAGER__CAN_INT_PIN 7
 
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
+typedef enum
+{
+    DEV__CAN__CMD_DAMPER = 0x01,
+    DEV__CAN__CMD_ACCELEROMETER_X,
+    DEV__CAN__CMD_ACCELEROMETER_Y,
+    DEV__CAN__CMD_ACCELEROMETER_Z,
+    DEV__CAN__CMD_RIDE_HEIGHT,
+    DEV__CAN__CMD_WHEEL_SPEED,
+    DEV__CAN__CMD_TIME_STAMP
+} dev__can__cmd_t;
+
+typedef enum
+{
+    DEV__CAN__CMD_2000 = 0,//0x2000,
+    DEV__CAN__CMD_2001,
+    DEV__CAN__CMD_2002,
+    DEV__CAN__CMD_2003,
+    DEV__CAN__CMD_2004,
+    DEV__CAN__CMD_2005,
+    DEV__CAN__CMD_2006,
+    DEV__CAN__CMD_2007
+} dev__can__ecu_id_t;
 
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
+extern dev__can__cmd_t dev__can_cmd;
+extern dev__can__ecu_id_t dev__can_ecu_id;
 
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-void sys__manager__init();
+void dev__can__mcp2515__init();
+void dev__can__mcp2515_rx();
+int16_t dev__bytes_2_int16(unsigned char byte1, unsigned char byte2);
+static float dev__can__mcp2515_bytes_2_float(uint8_t byteArray[]);
 
-void sys__manager__process();
 /*----------------------------------------------------------------------------
   inlines
 ----------------------------------------------------------------------------*/
@@ -87,4 +85,8 @@ void sys__manager__process();
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif //SYS__MANAGER_H
+#endif // CONTROLLER_V2_DEV__CAN__MCP2515_H
+
+/*----------------------------------------------------------------------------
+  End of file
+----------------------------------------------------------------------------*/

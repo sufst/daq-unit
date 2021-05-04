@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file dev__can__mcp2515.h
-* @brief Device layer implementing the MCP2515 CAN Controller
+* @file sys__datastore.h
+* @brief System datastore
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,18 +16,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
-
 /*----------------------------------------------------------------------------
   @brief
 ----------------------------------------------------------------------------*/
-#ifndef CONTROLLER_V2_DEV__CAN__MCP2515_H
-#define CONTROLLER_V2_DEV__CAN__MCP2515_H
-
+#ifndef CONTROLLER_V2_SYS__DATASTORE_H
+#define CONTROLLER_V2_SYS__DATASTORE_H
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
 #include "Arduino.h"
-#include "../sys/sys__datastore.h"
+
+#include "sys__manager.h"
 
 /*----------------------------------------------------------------------------
   macros
@@ -40,30 +39,95 @@
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
-typedef enum
-{
-    DEV__CAN__CMD_DAMPER = 0x01,
-    DEV__CAN__CMD_ACCELEROMETER_X,
-    DEV__CAN__CMD_ACCELEROMETER_Y,
-    DEV__CAN__CMD_ACCELEROMETER_Z,
-    DEV__CAN__CMD_RIDE_HEIGHT,
-    DEV__CAN__CMD_WHEEL_SPEED,
-    DEV__CAN__CMD_TIME_STAMP
-} dev__can__cmd_t;
 
+
+// ECU CAN Data Packets
+typedef struct
+{
+    int16_t rpm = 0;
+    int16_t tps = 0;
+    int16_t waterTemp = 0;
+    int16_t airTemp = 0;
+} sys__datastore__x2000_t;
+
+typedef struct
+{
+    int16_t maniPress = 1;
+    int16_t lambda = 1;
+    int16_t speed = 1;
+    int16_t oilPress = 1;
+} sys__datastore__x2001_t;
+
+typedef struct
+{
+    int16_t fuelPress = 2;
+    int16_t oilTemp = 2;
+    int16_t battery = 2;
+    int16_t fuelCon = 2;
+} sys__datastore__x2002_t;
+
+typedef struct
+{
+    int16_t gear = 3;
+    int16_t advance = 3;
+    int16_t injTime = 3;
+    int16_t fuelCon = 3;
+} sys__datastore__x2003_t;
+
+typedef struct
+{
+    int16_t ana1 = 4;
+    int16_t ana2 = 4;
+    int16_t ana3 = 4;
+    int16_t camAdv = 4;
+} sys__datastore__x2004_t;
+
+typedef struct
+{
+    int16_t camTar = 5;
+    int16_t camPwm = 5;
+    int16_t crankErr = 5;
+    int16_t camErr = 5;
+} sys__datastore__x2005_t;
+
+typedef struct
+{
+    int16_t camAdv2 = 6;
+    int16_t camTar2 = 6;
+    int16_t camPwm2 = 6;
+    int16_t external5v = 6;
+} sys__datastore__x2006_t;
+
+typedef struct
+{
+    int16_t injDutyCycle = 7;
+    int16_t lambdaPid = 7;
+    int16_t lambdaPidAsj = 7;
+} sys__datastore__x2007_t;
+
+
+typedef struct
+{
+
+  sys__datastore__x2000_t x2000_data;
+  sys__datastore__x2001_t x2001_data;
+  sys__datastore__x2002_t x2002_data;
+  sys__datastore__x2003_t x2003_data;
+  sys__datastore__x2004_t x2004_data;
+  sys__datastore__x2005_t x2005_data;
+  sys__datastore__x2006_t x2006_data;
+  sys__datastore__x2007_t x2007_data;
+
+} sys__ecu_datastore_t;
 
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
-extern dev__can__cmd_t dev__can_cmd;
-
+extern sys__ecu_datastore_t sys__ecu_datastore;
 
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
-void dev__can__mcp2515__init();
-void dev__can__mcp2515_rx(sys__datastore_t dataStore);
-static float dev__can__mcp2515_bytes_2_float(uint8_t byteArray[]);
 
 /*----------------------------------------------------------------------------
   inlines
@@ -73,8 +137,7 @@ static float dev__can__mcp2515_bytes_2_float(uint8_t byteArray[]);
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif // CONTROLLER_V2_DEV__CAN__MCP2515_H
-
+#endif //CONTROLLER_V2_SYS__DATASTORE_H
 /*----------------------------------------------------------------------------
   End of file
 ----------------------------------------------------------------------------*/

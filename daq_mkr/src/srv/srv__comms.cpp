@@ -81,7 +81,6 @@ void srv__comms__can_init()
 *****************************************************************************/
 void srv__comms__process(sys__datastore_t dataStore)
 { 
-  dev__can__mcp2515_rx(dataStore);
 
 }
 

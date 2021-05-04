@@ -51,10 +51,23 @@ typedef enum
     DEV__CAN__CMD_TIME_STAMP
 } dev__can__cmd_t;
 
+typedef enum
+{
+    DEV__CAN__CMD_2000 = 0x2000,
+    DEV__CAN__CMD_2001,
+    DEV__CAN__CMD_2002,
+    DEV__CAN__CMD_2003,
+    DEV__CAN__CMD_2004,
+    DEV__CAN__CMD_2005,
+    DEV__CAN__CMD_2006,
+    DEV__CAN__CMD_2007
+} dev__can__ecu_id_t;
+
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
 extern dev__can__cmd_t dev__can_cmd;
+extern dev__can__ecu_id_t dev__can_ecu_id;
 
 /*----------------------------------------------------------------------------
   prototypes

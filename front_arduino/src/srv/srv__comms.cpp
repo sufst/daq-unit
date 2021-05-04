@@ -79,7 +79,8 @@ void srv__comms__can_init(uint8_t pinCS)
 void srv__comms__process(sys__datastore_t dataStore)
 { 
 
-  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_WHEEL_SPEED);
+  dev__can__mcp2515_tx(dataStore, DEV__CAN__CMD_2000);
+  delay(1000);
 
 }
 

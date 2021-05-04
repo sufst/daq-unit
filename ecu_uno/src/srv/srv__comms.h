@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file sys__datastore.h
-* @brief System datastore
+* @file srv__comms.h
+* @brief CAN communications service layer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,18 @@
 /*----------------------------------------------------------------------------
   @brief
 ----------------------------------------------------------------------------*/
-#ifndef CONTROLLER_V2_SYS__DATASTORE_H
-#define CONTROLLER_V2_SYS__DATASTORE_H
+
+#ifndef CONTROLLER_V2_SRV__COMMS_H
+#define CONTROLLER_V2_SRV__COMMS_H
 /*----------------------------------------------------------------------------
   nested include files
 ----------------------------------------------------------------------------*/
 #include "Arduino.h"
 
-#include "sys__manager.h"
+#include <stdint.h>
 
+#include "../sys/sys__manager.h"
+#include "../sys/sys__datastore.h"
 /*----------------------------------------------------------------------------
   macros
 ----------------------------------------------------------------------------*/
@@ -35,121 +38,25 @@
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
-#define SYS__DATASTORE__STATUS_TAG_AMOUNT 3
 
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__WHEEL_SPEED_ENABLED
-typedef struct
-{
-    uint8_t tag;
-    uint32_t data;
-    uint32_t timestamp;
-} sys__datastore__wheel_speed_save_t;
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
-
-typedef struct
-{
-
-#if SYS__MANAGER__WHEEL_SPEED_ENABLED
-    sys__datastore__wheel_speed_save_t wheelSpeed;
-#endif // SYS__MANAGER__WHEEL_SPEED_ENABLED
-
-
-
-} sys__datastore_t;
-
-
-// ECU CAN Data Packets
-typedef struct
-{
-    int16_t rpm = 0;
-    int16_t tps = 0;
-    int16_t waterTemp = 0;
-    int16_t airTemp = 0;
-} sys__datastore__x2000_t;
-
-typedef struct
-{
-    int16_t maniPress = 1;
-    int16_t lambda = 1;
-    int16_t speed = 1;
-    int16_t oilPress = 1;
-} sys__datastore__x2001_t;
-
-typedef struct
-{
-    int16_t fuelPress = 2;
-    int16_t oilTemp = 2;
-    int16_t Battery = 2;
-    int16_t fuelCon = 2;
-} sys__datastore__x2002_t;
-
-typedef struct
-{
-    int16_t gear = 3;
-    int16_t advance = 3;
-    int16_t injTime = 3;
-    int16_t fuelCon = 3;
-} sys__datastore__x2003_t;
-
-typedef struct
-{
-    int16_t ana1 = 4;
-    int16_t ana2 = 4;
-    int16_t ana3 = 4;
-    int16_t camAdv = 4;
-} sys__datastore__x2004_t;
-
-typedef struct
-{
-    int16_t camTar = 5;
-    int16_t camPwm = 5;
-    int16_t crankErr = 5;
-    int16_t camErr = 5;
-} sys__datastore__x2005_t;
-
-typedef struct
-{
-    int16_t camAdv2 = 6;
-    int16_t camTar2 = 6;
-    int16_t camPwm2 = 6;
-    int16_t external5v = 6;
-} sys__datastore__x2006_t;
-
-typedef struct
-{
-    int16_t injDutyCycle = 7;
-    int16_t lambdaPid = 7;
-    int16_t lambdaPidAsj = 7;
-} sys__datastore__x2007_t;
-
-
-typedef struct
-{
-
-  sys__datastore__x2000_t x2000_data;
-  sys__datastore__x2001_t x2001_data;
-  sys__datastore__x2002_t x2002_data;
-  sys__datastore__x2003_t x2003_data;
-  sys__datastore__x2004_t x2004_data;
-  sys__datastore__x2005_t x2005_data;
-  sys__datastore__x2006_t x2006_data;
-  sys__datastore__x2007_t x2007_data;
-
-} sys__ecu_datastore_t;
 
 /*----------------------------------------------------------------------------
   extern variables
 ----------------------------------------------------------------------------*/
-extern sys__datastore_t sys__datastore;
-extern sys__ecu_datastore_t sys__ecu_datastore;
 
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
+#if SYS__MANAGER__CAN_BUS_ENABLED
+void srv__comms__can_init(uint8_t pinCS);
+#endif // SYS__MANAGER__CAN_BUS_ENABLED
 
+
+void srv__comms__process(sys__ecu_datastore_t dataStore);
+//void srv__comms__can_tx(sys__ecu_datastore_t dataStore, uint8_t ecuCanId);
 /*----------------------------------------------------------------------------
   inlines
 ----------------------------------------------------------------------------*/
@@ -158,7 +65,8 @@ extern sys__ecu_datastore_t sys__ecu_datastore;
   compile time checks
 ----------------------------------------------------------------------------*/
 
-#endif //CONTROLLER_V2_SYS__DATASTORE_H
+#endif //CONTROLLER_V2_SRV__COMMS_H
+
 /*----------------------------------------------------------------------------
   End of file
 ----------------------------------------------------------------------------*/
