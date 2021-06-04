@@ -50,7 +50,7 @@
 #define DEV__XBEE_FRAME_DIAG_LENGTH 8
 #define DEV__XBEE_FRAME_POWER_LENGTH 14
 #define DEV__XBEE_FRAME_SUS_LENGTH 12
-#define DEV__XBEE_FRAME_MISC_LENGTH 12
+#define DEV__XBEE_FRAME_MISC_LENGTH 60
 
 
 /*----------------------------------------------------------------------------

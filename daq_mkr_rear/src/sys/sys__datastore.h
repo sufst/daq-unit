@@ -129,6 +129,21 @@ typedef struct
 
 
 
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
+typedef struct
+{
+    uint32_t dataX_f;
+    uint32_t dataY_f;
+    uint32_t dataZ_f;
+    uint32_t dataX_r;
+    uint32_t dataY_r;
+    uint32_t dataZ_r;
+    bool hasReceivedXY_f = false;
+    bool hasReceivedZ_f = false;
+    bool hasReceived_r = false;
+} sys__datastore__accelerometer_save_t;
+#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
+
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
 typedef struct
 {
@@ -140,20 +155,6 @@ typedef struct
     bool hasReceived_r = false;
 } sys__datastore__damper_pots_save_t;
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__ACCELEROMETERS_ENABLED
-typedef struct
-{
-    uint32_t dataX_f;
-    uint32_t dataY_f;
-    uint32_t dataZ_f;
-    uint32_t dataX_r;
-    uint32_t dataY_r;
-    uint32_t dataZ_r;
-    bool hasReceived_f = false;
-    bool hasReceived_r = false;
-} sys__datastore__accelerometer_save_t;
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
 typedef struct
@@ -190,14 +191,12 @@ typedef struct
 typedef struct
 {
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
-    // element0=left, element1=right
     sys__datastore__damper_pots_save_t damperPots;
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
 
-#if SYS__MANAGER__ACCELEROMETERS_ENABLED
-    // element0=left, element1=right
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
     sys__datastore__accelerometer_save_t accelerometers;
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
+#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
     sys__datastore__ride_height_save_t rideHeight;

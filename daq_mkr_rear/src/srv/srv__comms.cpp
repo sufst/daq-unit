@@ -100,6 +100,15 @@ void srv__comms__process(sys__datastore_t *dataStore)
   if(dataStore->rideHeight.hasReceived_f == true
     && dataStore->rideHeight.hasReceived_r == true)
       dev__xbee_tx(DEV__XBEE__CMD_SUSPENSION);
+
+  if(dataStore->accelerometers.hasReceivedXY_f == true
+    && dataStore->accelerometers.hasReceivedZ_f == true
+    && dataStore->accelerometers.hasReceived_r == true
+    && dataStore->damperPots.hasReceived_f == true
+    && dataStore->damperPots.hasReceived_r == true
+    && dataStore->wheelSpeeds.hasReceived_f == true
+    && dataStore->wheelSpeeds.hasReceived_r == true)
+      dev__xbee_tx(DEV__XBEE__CMD_MISC);
     
     
 }

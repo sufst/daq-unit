@@ -72,8 +72,8 @@ void dev__can__mcp2515__irq_handler(){
 }
 
 /*************************************************************************//**
-* @brief Initialise the wheel speed sensor
-* @param dev__wheel__speed__obj_t* obj Wheel speed device object
+* @brief Initialise the MCP2515 CAN Interface
+* @param None
 * @return None
 * @note
 *****************************************************************************/
@@ -137,13 +137,30 @@ void dev__can__mcp2515_rx()
   Serial.print("Received ID:");
   Serial.print(can_id);
   switch(can_id){
+    case DEV__CAN__CMD_ACCEL_XY:{            
+      sys__datastore.accelerometers.dataX_f = dev__bytes_2_uint32(rxBuf[0], rxBuf[1], rxBuf[2], rxBuf[3]);
+      sys__datastore.accelerometers.dataY_f = dev__bytes_2_uint32(rxBuf[4], rxBuf[5], rxBuf[6], rxBuf[7]);
+      sys__datastore.accelerometers.hasReceivedXY_f = true;
+      Serial.print(" -\tAccelerometers Front X: ");
+      Serial.print(sys__datastore.accelerometers.dataX_f);
+      Serial.print(" -\tAccelerometers Front Y: ");
+      Serial.println(sys__datastore.accelerometers.dataY_f);
+      break; 
+    }
+    case DEV__CAN__CMD_ACCEL_Z:{            
+      sys__datastore.accelerometers.dataZ_f = dev__bytes_2_uint32(rxBuf[0], rxBuf[1], rxBuf[2], rxBuf[3]);
+      sys__datastore.accelerometers.hasReceivedZ_f = true;
+      Serial.print(" -\tAccelerometers Front Z: ");
+      Serial.println(sys__datastore.accelerometers.dataZ_f);
+      break; 
+    }
     case DEV__CAN__CMD_DAMPER:{            
       sys__datastore.damperPots.data_fl = dev__bytes_2_uint32(rxBuf[0], rxBuf[1], rxBuf[2], rxBuf[3]);
       sys__datastore.damperPots.data_fr = dev__bytes_2_uint32(rxBuf[4], rxBuf[5], rxBuf[6], rxBuf[7]);
       sys__datastore.damperPots.hasReceived_f = true;
-      Serial.print(" -\tDamper Pots Front Left:");
+      Serial.print(" -\tDamper Pot Front Left: ");
       Serial.print(sys__datastore.damperPots.data_fl);
-      Serial.print(" -\tDamper Pots Front Right:");
+      Serial.print(" -\tDamper Pot Front Right: ");
       Serial.println(sys__datastore.damperPots.data_fr);
       break; 
     }
@@ -151,16 +168,16 @@ void dev__can__mcp2515_rx()
       sys__datastore.wheelSpeeds.data_fl = dev__bytes_2_uint32(rxBuf[0], rxBuf[1], rxBuf[2], rxBuf[3]);
       sys__datastore.wheelSpeeds.data_fr = dev__bytes_2_uint32(rxBuf[4], rxBuf[5], rxBuf[6], rxBuf[7]);
       sys__datastore.wheelSpeeds.hasReceived_f = true;
-      Serial.print(" -\tWheel Speed Front Left:");
+      Serial.print(" -\tWheel Speed Front Left: ");
       Serial.print(sys__datastore.wheelSpeeds.data_fl);
-      Serial.print(" -\tWheel Speed Front Right:");
+      Serial.print(" -\tWheel Speed Front Right: ");
       Serial.println(sys__datastore.wheelSpeeds.data_fr);
       break; 
     }
     case DEV__CAN__CMD_RIDE_HEIGHT:{            
       sys__datastore.rideHeight.data_f = dev__bytes_2_uint32(rxBuf[0], rxBuf[1], rxBuf[2], rxBuf[3]);
       sys__datastore.rideHeight.hasReceived_f = true;
-      Serial.print(" -\tRide Height Front:");
+      Serial.print(" -\tRide Height Front: ");
       Serial.print(sys__datastore.rideHeight.data_f);
       break; 
     }
@@ -170,7 +187,7 @@ void dev__can__mcp2515_rx()
       sys__datastore.x2000_data.waterTemp = dev__bytes_2_int16(rxBuf[4], rxBuf[5]);
       sys__datastore.x2000_data.airTemp = dev__bytes_2_int16(rxBuf[6], rxBuf[7]);     
       sys__datastore.x2000_data.hasReceived = true; 
-      Serial.print(" -\tRPM:");
+      Serial.print(" -\tRPM: ");
       Serial.print(sys__datastore.x2000_data.rpm);
       Serial.print("\tTPS: ");
       Serial.print(sys__datastore.x2000_data.tps);
@@ -186,7 +203,7 @@ void dev__can__mcp2515_rx()
       sys__datastore.x2001_data.speed = dev__bytes_2_int16(rxBuf[4], rxBuf[5]);
       sys__datastore.x2001_data.oilPress = dev__bytes_2_int16(rxBuf[6], rxBuf[7]);
       sys__datastore.x2001_data.hasReceived = true;
-      Serial.print(" -\tManifol Pressure:");
+      Serial.print(" -\tManifol Pressure: ");
       Serial.print(sys__datastore.x2001_data.maniPress);
       Serial.print("\tLambda: ");
       Serial.print(sys__datastore.x2001_data.lambda);
@@ -202,7 +219,7 @@ void dev__can__mcp2515_rx()
       sys__datastore.x2002_data.battery = dev__bytes_2_int16(rxBuf[4], rxBuf[5]);
       sys__datastore.x2002_data.fuelCon = dev__bytes_2_int16(rxBuf[6], rxBuf[7]);
       sys__datastore.x2002_data.hasReceived = true;
-      Serial.print(" -\tFuel Pressure:");
+      Serial.print(" -\tFuel Pressure: ");
       Serial.print(sys__datastore.x2002_data.fuelPress);
       Serial.print("\tOil Pressure: ");
       Serial.print(sys__datastore.x2002_data.oilTemp);
@@ -218,7 +235,7 @@ void dev__can__mcp2515_rx()
       sys__datastore.x2003_data.injTime = dev__bytes_2_int16(rxBuf[4], rxBuf[5]);
       sys__datastore.x2003_data.fuelCon = dev__bytes_2_int16(rxBuf[6], rxBuf[7]);
       sys__datastore.x2003_data.hasReceived = true;
-      Serial.print(" -\tCurrent Gear:");
+      Serial.print(" -\tCurrent Gear: ");
       Serial.print(sys__datastore.x2003_data.gear);
       Serial.print("\tAdvance: ");
       Serial.print(sys__datastore.x2003_data.advance);
@@ -266,7 +283,7 @@ void dev__can__mcp2515_rx()
       sys__datastore.x2006_data.camPwm2 = dev__bytes_2_int16(rxBuf[4], rxBuf[5]);
       sys__datastore.x2006_data.external5v = dev__bytes_2_int16(rxBuf[6], rxBuf[7]);
       sys__datastore.x2006_data.hasReceived = true;
-      Serial.print(" -\tCam Advance 2:");
+      Serial.print(" -\tCam Advance 2: ");
       Serial.print(sys__datastore.x2006_data.camAdv2);
       Serial.print("\tCam Target 2: ");
       Serial.print(sys__datastore.x2006_data.camTar2);
@@ -281,7 +298,7 @@ void dev__can__mcp2515_rx()
       sys__datastore.x2007_data.lambdaPid = dev__bytes_2_int16(rxBuf[2], rxBuf[3]);
       sys__datastore.x2007_data.lambdaPidAdj = dev__bytes_2_int16(rxBuf[4], rxBuf[5]);
       sys__datastore.x2007_data.hasReceived = true;
-      Serial.print(" -\tInjection Duty Cycle:");
+      Serial.print(" -\tInjection Duty Cycle: ");
       Serial.print(sys__datastore.x2007_data.injDutyCycle);
       Serial.print("\tLambda PID: ");
       Serial.print(sys__datastore.x2007_data.lambdaPid);

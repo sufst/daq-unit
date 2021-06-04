@@ -64,14 +64,13 @@ sys__datastore_t sys__datastore;
 void sys__manager__init()
 {
 
-/*#if SYS__MANAGER__ACCELEROMETERS_ENABLED
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
     // 3 pins per accelerometer, x, y, z axis
-    uint8_t accelerometerPins[SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT*SYS__MANAGER__ACCELEROMETER_ATTACHED_PINS] 
-                                                                          = {SYS__MANAGER__ACCELEROMETER_X_PIN,
+    uint8_t accelerometerPins[SYS__MANAGER__ACCELEROMETER_ATTACHED_AMT] = {SYS__MANAGER__ACCELEROMETER_X_PIN,
                                                                              SYS__MANAGER__ACCELEROMETER_Y_PIN,
                                                                              SYS__MANAGER__ACCELEROMETER_Z_PIN};
-    srv__daq__accelerometers_init(accelerometerPins);
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED */
+    srv__daq__accelerometer_init(accelerometerPins);
+#endif // SYS__MANAGER__ACCELEROMETER_ENABLED 
   
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
     uint8_t dampersPins[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT] = {SYS__MANAGER__DAMPER_POT_L_PIN,
@@ -108,9 +107,7 @@ void sys__manager__init()
 void sys__manager__process()
 {
     srv__daq__process(&sys__datastore);
-    delay(1000);
     srv__comms__process(&sys__datastore);
-    delay(1000);
     
 }
 /*----------------------------------------------------------------------------

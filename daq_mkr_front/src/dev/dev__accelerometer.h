@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file srv__comms.cpp
-* @brief DAQ service layer
+* @file dev__accelerometer.h
+* @brief device layer for digital read of accelerometer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,17 +16,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
+
 /*----------------------------------------------------------------------------
-  include files
+  @brief
 ----------------------------------------------------------------------------*/
-#include "../sys/sys__manager.h"
-#include "../sys/sys__datastore.h"
-#include "srv__comms.h"
+#ifndef CONTROLLER_V2_DEV__ACCELEROMETER_H
+#define CONTROLLER_V2_DEV__ACCELEROMETER_H
 
-#if SYS__MANAGER__CAN_BUS_ENABLED
-#include "../dev/dev__can__mcp2515.h"
-#endif SYS__MANAGER__CAN_BUS_ENABLED
+/*----------------------------------------------------------------------------
+  nested include files
+----------------------------------------------------------------------------*/
+#include "Arduino.h"
 
+/*----------------------------------------------------------------------------
+  macros
+----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
   manifest constants
@@ -35,63 +39,41 @@
 /*----------------------------------------------------------------------------
   type definitions
 ----------------------------------------------------------------------------*/
+typedef struct
+{
+    uint8_t pin;
+    uint32_t conversionRate;
+} dev__accelerometer__obj_t;
+/*----------------------------------------------------------------------------
+  extern variables
+----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
+void dev__accelerometer__init(dev__accelerometer__obj_t* obj);
 
 /*----------------------------------------------------------------------------
-  macros
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  global variables
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  static variables
-----------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-  public functions
-----------------------------------------------------------------------------*/
-#if SYS__MANAGER__CAN_BUS_ENABLED
-
-/*************************************************************************//**
-* @brief Initialise MCP2515 CAN
-* @param uint8_t pinCS Pin number of connection to SPI CS of MCP2515
-* @return None
-* @note
-*****************************************************************************/
-void srv__comms__can_init()
-{  
-  dev__can__mcp2515__init();
-
-}
-
-
-/*----------------------------------------------------------------------------
-  private functions
+  inlines
 ----------------------------------------------------------------------------*/
 /*************************************************************************//**
-* @brief Communications service process loop
-* @param sys__datastore_t dataStore
-* @param uint8_t canID
-* @return None
+* @brief Read the accelerometer pin voltage in micro volts (uV)
+* @param dev__accelerometer__obj_t *obj Accelerometer device object
+* @return uint32_t 
 * @note
 *****************************************************************************/
-void srv__comms__process(sys__datastore_t *dataStore)
-{ 
-    Serial.println("CAN TRANSMISSION:");
-    dev__can__mcp2515_tx(DEV__CAN__CMD_ACCELEROMETER, dataStore);
-    dev__can__mcp2515_tx(DEV__CAN__CMD_DAMPER, dataStore);
-    dev__can__mcp2515_tx(DEV__CAN__CMD_WHEEL_SPEED, dataStore);
-    dev__can__mcp2515_tx(DEV__CAN__CMD_RIDE_HEIGHT, dataStore);
-    
+inline uint32_t dev__accelerometer__read_uv(dev__accelerometer__obj_t *obj)
+{
+  uint32_t adcRaw = analogRead(obj->pin);
+  return (adcRaw * obj->conversionRate);
 }
 
+/*----------------------------------------------------------------------------
+  compile time checks
+----------------------------------------------------------------------------*/
 
-#endif // SYS__MANAGER__CAN_BUS_ENABLED
+#endif // CONTROLLER_V2_DEV__ACCELEROMETER_H
 
-
-
+/*----------------------------------------------------------------------------
+  End of file
+----------------------------------------------------------------------------*/

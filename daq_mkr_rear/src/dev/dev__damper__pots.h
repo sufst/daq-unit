@@ -65,8 +65,7 @@ void dev__damper__pot__init(dev__damper__pot__obj_t* obj);
 inline uint32_t dev__damper_pot__read_uv(dev__damper__pot__obj_t *obj)
 {
   uint32_t adcRaw = analogRead(obj->pin);
-  //return (adcRaw * obj->conversionRate);
-  return 1;
+  return (adcRaw * obj->conversionRate);
 }
 
 /*----------------------------------------------------------------------------

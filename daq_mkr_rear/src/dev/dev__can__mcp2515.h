@@ -42,13 +42,12 @@
 ----------------------------------------------------------------------------*/
 typedef enum
 {
-    DEV__CAN__CMD_DAMPER = 0x01,
-    DEV__CAN__CMD_ACCELEROMETER_X,
-    DEV__CAN__CMD_ACCELEROMETER_Y,
-    DEV__CAN__CMD_ACCELEROMETER_Z,
-    DEV__CAN__CMD_RIDE_HEIGHT,
+    
+    DEV__CAN__CMD_ACCEL_XY = 0x01,
+    DEV__CAN__CMD_ACCEL_Z,
+    DEV__CAN__CMD_DAMPER,
     DEV__CAN__CMD_WHEEL_SPEED,
-    DEV__CAN__CMD_TIME_STAMP
+    DEV__CAN__CMD_RIDE_HEIGHT
 } dev__can__cmd_t;
 
 typedef enum

@@ -55,13 +55,13 @@ typedef enum
 /*----------------------------------------------------------------------------
   prototypes
 ----------------------------------------------------------------------------*/
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
+void srv__daq__accelerometers_init(uint8_t *pins);
+#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
+
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
 void srv__daq__damper_pots_init(uint8_t *pins);
 #endif // SYS__MANAGER__DAMPER_POTS_ENABLED
-
-#if SYS__MANAGER__ACCELEROMETERS_ENABLED
-void srv__daq__accelerometers_init(uint8_t *pins);
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
 
 #if SYS__MANAGER__RIDE_HEIGHT_ENABLED
 void srv__daq__ride_height_init(uint8_t pin);

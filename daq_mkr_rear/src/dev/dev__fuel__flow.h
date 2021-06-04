@@ -65,8 +65,7 @@ void dev__fuel__flow__init(dev__fuel__flow__obj_t* obj);
 inline uint32_t dev__fuel_flow__read_uv(dev__fuel__flow__obj_t *obj)
 {
   uint32_t adcRaw = analogRead(obj->pin);
-  //return (adcRaw * obj->conversionRate);
-  return 3;
+  return (adcRaw * obj->conversionRate);
 }
 
 /*----------------------------------------------------------------------------

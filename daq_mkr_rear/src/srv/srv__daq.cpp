@@ -24,9 +24,9 @@
 #include "../sys/sys__manager.h"
 #include "../sys/sys__datastore.h"
 
-/*#if SYS__MANAGER__ACCELEROMETERS_ENABLED
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
 #include "../dev/dev__accelerometer.h"
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED */
+#endif // SYS__MANAGER__ACCELEROMETER_ENABLED 
 
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
 #include "../dev/dev__damper__pots.h"
@@ -71,10 +71,10 @@
 /*----------------------------------------------------------------------------
   static variables
 ----------------------------------------------------------------------------*/
-/*#if SYS__MANAGER__ACCELEROMETERS_ENABLED
-static dev__accelerometer__obj_t dev__accelerometers__obj[SYS__MANAGER__ACCELEROMETERS_ATTACHED_AMT];
-#endif // SYS__MANAGER__ACCELEROMETERS_ENABLED
-*/
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
+static dev__accelerometer__obj_t dev__accelerometer__obj[SYS__MANAGER__ACCELEROMETER_ATTACHED_AMT];
+#endif // SYS__MANAGER__ACCELEROMETER_ENABLED
+
 
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
 static dev__damper__pot__obj_t dev__damper__pots__obj[SYS__MANAGER__DAMPER_POTS_ATTACHED_AMT];
@@ -96,6 +96,23 @@ static dev__wheel__speed__obj_t dev__wheel__speeds__obj[SYS__MANAGER__WHEEL_SPEE
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
+#if SYS__MANAGER__ACCELEROMETER_ENABLED
+/*************************************************************************//**
+* @brief Initialise accelerometer
+* @param uint8_t *pins accelerometer pins
+* @return None
+* @note
+*****************************************************************************/
+void srv__daq__accelerometer_init(uint8_t *pins)
+{
+    for (uint8_t i = 0; i < SYS__MANAGER__ACCELEROMETER_ATTACHED_AMT; i++)
+    {
+        dev__accelerometer__obj[i].pin = pins[i];
+        dev__accelerometer__init(&dev__accelerometer__obj[i]);
+    }
+}
+#endif // SYS__MANAGER__ACCELOROMETER_ENABLED
+
 #if SYS__MANAGER__DAMPER_POTS_ENABLED
 /*************************************************************************//**
 * @brief Initialise damper pots
@@ -172,11 +189,24 @@ void srv__daq__wheel_speeds_init(uint8_t *pins)
 *****************************************************************************/
 void srv__daq__process(sys__datastore_t *dataStore)
 { 
+  Serial.print("Accelerometer Rear X - Y - Z: ");
+  dataStore->accelerometers.dataX_r = dev__accelerometer__read_uv(&dev__accelerometer__obj[0]);
+  dataStore->accelerometers.dataY_r = dev__accelerometer__read_uv(&dev__accelerometer__obj[1]);
+  dataStore->accelerometers.dataZ_r = dev__accelerometer__read_uv(&dev__accelerometer__obj[2]);
+  dataStore->accelerometers.hasReceived_r = true;
+  Serial.print(dataStore->accelerometers.dataX_r);
+  Serial.print("\t");
+  Serial.print(dataStore->accelerometers.dataY_r);
+  Serial.print("\t");
+  Serial.println(dataStore->accelerometers.dataZ_r);
+
+
   Serial.print("Damper Pots Rear Left - Right: ");
   dataStore->damperPots.data_rl = dev__damper_pot__read_uv(&dev__damper__pots__obj[0]);
   dataStore->damperPots.data_rr = dev__damper_pot__read_uv(&dev__damper__pots__obj[1]);
   dataStore->damperPots.hasReceived_r = true;
   Serial.print(dataStore->damperPots.data_rl);
+  Serial.print("\t");
   Serial.println(dataStore->damperPots.data_rr);
 
 
@@ -195,6 +225,7 @@ void srv__daq__process(sys__datastore_t *dataStore)
   dataStore->wheelSpeeds.data_rr = dev__wheel_speed__read_uv(&dev__wheel__speeds__obj[1]);
   dataStore->wheelSpeeds.hasReceived_r = true;
   Serial.print(dataStore->wheelSpeeds.data_rl);
+  Serial.print("\t");
   Serial.println(dataStore->wheelSpeeds.data_rr);
     
   delay(SYS__MANAGER__DAQ_SAMPLE_PERIOD);

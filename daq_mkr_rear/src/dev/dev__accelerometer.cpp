@@ -1,6 +1,6 @@
 /*************************************************************************//**
-* @file srv__comms.cpp
-* @brief DAQ service layer
+* @file dev__accelerometer.h
+* @brief device layer for digital read of accelerometer
 * @copyright    Copyright (C) 2019  SOUTHAMPTON UNIVERSITY FORMULA STUDENT TEAM
 
     This program is free software: you can redistribute it and/or modify
@@ -16,21 +16,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *****************************************************************************/
+
 /*----------------------------------------------------------------------------
   include files
 ----------------------------------------------------------------------------*/
-#include "../sys/sys__manager.h"
-#include "../sys/sys__datastore.h"
-#include "srv__comms.h"
-
-#if SYS__MANAGER__CAN_BUS_ENABLED
-#include "../dev/dev__can__mcp2515.h"
-#endif SYS__MANAGER__CAN_BUS_ENABLED
-
+#include "dev__accelerometer.h"
 
 /*----------------------------------------------------------------------------
   manifest constants
 ----------------------------------------------------------------------------*/
+#define DEV__ACCELEROMETER__ADC_CONVERSION_UV 488
 
 /*----------------------------------------------------------------------------
   type definitions
@@ -55,43 +50,21 @@
 /*----------------------------------------------------------------------------
   public functions
 ----------------------------------------------------------------------------*/
-#if SYS__MANAGER__CAN_BUS_ENABLED
-
 /*************************************************************************//**
-* @brief Initialise MCP2515 CAN
-* @param uint8_t pinCS Pin number of connection to SPI CS of MCP2515
+* @brief Initialise the accelerometer sensor
+* @param dev__accelerometer__obj_t* obj Accelerometer device object
 * @return None
 * @note
 *****************************************************************************/
-void srv__comms__can_init()
-{  
-  dev__can__mcp2515__init();
-
+void dev__accelerometer__init(dev__accelerometer__obj_t* obj)
+{
+    pinMode(obj->pin, INPUT_PULLUP);
+    obj->conversionRate = DEV__ACCELEROMETER__ADC_CONVERSION_UV;
 }
-
-
 /*----------------------------------------------------------------------------
   private functions
 ----------------------------------------------------------------------------*/
-/*************************************************************************//**
-* @brief Communications service process loop
-* @param sys__datastore_t dataStore
-* @param uint8_t canID
-* @return None
-* @note
-*****************************************************************************/
-void srv__comms__process(sys__datastore_t *dataStore)
-{ 
-    Serial.println("CAN TRANSMISSION:");
-    dev__can__mcp2515_tx(DEV__CAN__CMD_ACCELEROMETER, dataStore);
-    dev__can__mcp2515_tx(DEV__CAN__CMD_DAMPER, dataStore);
-    dev__can__mcp2515_tx(DEV__CAN__CMD_WHEEL_SPEED, dataStore);
-    dev__can__mcp2515_tx(DEV__CAN__CMD_RIDE_HEIGHT, dataStore);
-    
-}
 
-
-#endif // SYS__MANAGER__CAN_BUS_ENABLED
-
-
-
+/*----------------------------------------------------------------------------
+  End of file
+----------------------------------------------------------------------------*/

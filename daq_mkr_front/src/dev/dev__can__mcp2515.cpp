@@ -45,7 +45,6 @@
 /*----------------------------------------------------------------------------
   global variables
 ----------------------------------------------------------------------------*/
-//sys__datastore_t dev__datastore_2;
 MCP_CAN CAN0(3);                               // Set CS to pin 3  
 
 union 
@@ -62,8 +61,8 @@ union
   public functions
 ----------------------------------------------------------------------------*/
 /*************************************************************************//**
-* @brief Initialise the wheel speed sensor
-* @param dev__wheel__speed__obj_t* obj Wheel speed device object
+* @brief Initialise the MCP2515 CAN Interface
+* @param None
 * @return None
 * @note
 *****************************************************************************/
@@ -98,43 +97,73 @@ void dev__can__mcp2515_tx(int can_cmd, sys__datastore_t *dataStore)
   Serial.print(can_id);
   
   switch(can_cmd){
-    case DEV__CAN__CMD_DAMPER:{  
-      dev__can_data.data =  dataStore->damperPots[1].data;
+    case DEV__CAN__CMD_ACCELEROMETER_XY:{  
+      dev__can_data.data =  dataStore->accelerometer.dataX_f;
       for(int i=0; i<sizeof(uint32_t); i++)
         txBuf[i] = dev__can_data.dataBytes[i];
 
-      dev__can_data.data = dataStore->damperPots[1].data;
+      dev__can_data.data = dataStore->accelerometer.dataY_f;
+      for(int i=0; i<sizeof(uint32_t); i++)
+        txBuf[i+sizeof(uint32_t)] = dev__can_data.dataBytes[i];
+
+      Serial.print("\tAccelerometer Front X:");
+      Serial.print(dataStore->accelerometer.dataX_f);
+      Serial.print("\tAccelerometer Front Y:");
+      Serial.println(dataStore->accelerometer.dataY_f);
+      break; 
+    }      
+
+    case DEV__CAN__CMD_ACCELEROMETER_Z:{  
+      len = 4;
+      dev__can_data.data = dataStore->accelerometer.dataZ_f;
+      for(int i=0; i<sizeof(uint32_t); i++)
+        txBuf[i+(2*sizeof(uint32_t))] = dev__can_data.dataBytes[i];
+               
+      Serial.print("\tAccelerometer Front Z:");
+      Serial.println(dataStore->accelerometer.dataZ_f);
+      break; 
+    }  
+
+    case DEV__CAN__CMD_DAMPER:{  
+      dev__can_data.data =  dataStore->damperPots.data_fl;
+      for(int i=0; i<sizeof(uint32_t); i++)
+        txBuf[i] = dev__can_data.dataBytes[i];
+
+      dev__can_data.data = dataStore->damperPots.data_fr;
       for(int i=0; i<sizeof(uint32_t); i++)
         txBuf[i+sizeof(uint32_t)] = dev__can_data.dataBytes[i];
                
-      Serial.print("\tDamper 1:");
-      Serial.print(dataStore->damperPots[0].data);
-      Serial.print("\tDamper 2:");
-      Serial.println(dataStore->damperPots[1].data);
+      Serial.print("\tDamper Front Left:");
+      Serial.print(dataStore->damperPots.data_fl);
+      Serial.print("\tDamper Front Right:");
+      Serial.println(dataStore->damperPots.data_fr);
       break; 
     }      
+
     case DEV__CAN__CMD_WHEEL_SPEED:{  
-      dev__can_data.data = dataStore->wheelSpeeds[0].data;
+      dev__can_data.data = dataStore->wheelSpeeds.data_fl;
       for(int i=0; i<sizeof(uint32_t); i++)
         txBuf[i] = dev__can_data.dataBytes[i];
       
-      dev__can_data.data = dataStore->wheelSpeeds[1].data;
+      dev__can_data.data = dataStore->wheelSpeeds.data_fr;
       for(int i=0; i<sizeof(uint32_t); i++)
         txBuf[i+sizeof(uint32_t)] = dev__can_data.dataBytes[i];
                
       Serial.print("\tLeft Wheel Speed:");
-      Serial.print(dataStore->wheelSpeeds[0].data);
+      Serial.print(dataStore->wheelSpeeds.data_fl);
       Serial.print("\tRight Wheel Speed:");
-      Serial.println(dataStore->wheelSpeeds[1].data);
+      Serial.println(dataStore->wheelSpeeds.data_fr);
       break; 
     } 
+    
     case DEV__CAN__CMD_RIDE_HEIGHT:{  
-      dev__can_data.data = dataStore->rideHeight.data;
+      len = 4;
+      dev__can_data.data = dataStore->rideHeight.data_f;
       for(int i=0; i<sizeof(uint32_t); i++)
         txBuf[i] = dev__can_data.dataBytes[i];
             
       Serial.print("\t Ride Height:");
-      Serial.println(dataStore->rideHeight.data);
+      Serial.println(dataStore->rideHeight.data_f);
       break; 
     } 
 

@@ -98,8 +98,10 @@ void dev__xbee_tx(int xbee_cmd)
       for (int i = 0; i < DEV__XBEE_FRAME_CORE_LENGTH; i++) 
         Serial1.write(xbeePayload[i]);
       Serial.print("XBEE Transmitting Core Frame: ");
-      for (int i = 0; i < DEV__XBEE_FRAME_CORE_LENGTH; i++) 
+      for (int i = 0; i < DEV__XBEE_FRAME_CORE_LENGTH; i++) {
         Serial.print(xbeePayload[i]);
+        Serial.print(" ");
+      }
       Serial.println();
       break;     
     }  
@@ -139,8 +141,10 @@ void dev__xbee_tx(int xbee_cmd)
       for (int i = 0; i < DEV__XBEE_FRAME_POWER_LENGTH; i++) 
         Serial1.write(xbeePayload[i]);
       Serial.print("XBEE Transmitting Power Frame: ");
-      for (int i = 0; i < DEV__XBEE_FRAME_POWER_LENGTH; i++) 
+      for (int i = 0; i < DEV__XBEE_FRAME_POWER_LENGTH; i++) {
         Serial.print(xbeePayload[i]);
+        Serial.print(" ");
+      }
       Serial.println();
       break;     
     }
@@ -165,20 +169,97 @@ void dev__xbee_tx(int xbee_cmd)
       for (int i = 0; i < DEV__XBEE_FRAME_SUS_LENGTH; i++) 
         Serial1.write(xbeePayload[i]);
       Serial.print("XBEE Transmitting Suspension Frame: ");
-      for (int i = 0; i < DEV__XBEE_FRAME_SUS_LENGTH; i++) 
+      for (int i = 0; i < DEV__XBEE_FRAME_SUS_LENGTH; i++){
         Serial.print(xbeePayload[i]);
+        Serial.print(" ");
+      }         
       Serial.println();
       break;     
     } 
     
+
+    case DEV__XBEE__CMD_MISC: {     
+      xbeePayload[1] = DEV__XBEE__CMD_MISC;
+      xbeePayload[2] = DEV__XBEE_MISC_BITFIELD >> 8;
+      xbeePayload[3] = DEV__XBEE_MISC_BITFIELD & 0xFF;
+      xbeePayload[4] = (sys__datastore.accelerometers.dataX_f >> 24) & 0xFF;
+      xbeePayload[5] = (sys__datastore.accelerometers.dataX_f >> 16) & 0xFF;
+      xbeePayload[6] = (sys__datastore.accelerometers.dataX_f >> 8) & 0xFF;    
+      xbeePayload[7] = sys__datastore.accelerometers.dataX_f & 0xFF;
+      xbeePayload[8] = (sys__datastore.accelerometers.dataY_f >> 24) & 0xFF;
+      xbeePayload[9] = (sys__datastore.accelerometers.dataY_f >> 16) & 0xFF;
+      xbeePayload[10] = (sys__datastore.accelerometers.dataY_f >> 8) & 0xFF;    
+      xbeePayload[11] = sys__datastore.accelerometers.dataY_f & 0xFF;
+      xbeePayload[12] = (sys__datastore.accelerometers.dataZ_f >> 24) & 0xFF;
+      xbeePayload[13] = (sys__datastore.accelerometers.dataZ_f >> 16) & 0xFF;
+      xbeePayload[14] = (sys__datastore.accelerometers.dataZ_f >> 8) & 0xFF;    
+      xbeePayload[15] = sys__datastore.accelerometers.dataZ_f & 0xFF;
+      xbeePayload[16] = (sys__datastore.accelerometers.dataX_r >> 24) & 0xFF;
+      xbeePayload[17] = (sys__datastore.accelerometers.dataX_r >> 16) & 0xFF;
+      xbeePayload[18] = (sys__datastore.accelerometers.dataX_r >> 8) & 0xFF;    
+      xbeePayload[19] = sys__datastore.accelerometers.dataX_r & 0xFF;
+      xbeePayload[20] = (sys__datastore.accelerometers.dataY_r >> 24) & 0xFF;
+      xbeePayload[21] = (sys__datastore.accelerometers.dataY_r >> 16) & 0xFF;
+      xbeePayload[22] = (sys__datastore.accelerometers.dataY_r >> 8) & 0xFF;    
+      xbeePayload[23] = sys__datastore.accelerometers.dataY_r & 0xFF;
+      xbeePayload[24] = (sys__datastore.accelerometers.dataZ_r >> 24) & 0xFF;
+      xbeePayload[25] = (sys__datastore.accelerometers.dataZ_r >> 16) & 0xFF;
+      xbeePayload[26] = (sys__datastore.accelerometers.dataZ_r >> 8) & 0xFF;    
+      xbeePayload[27] = sys__datastore.accelerometers.dataZ_r & 0xFF;
+
+      xbeePayload[28] = (sys__datastore.damperPots.data_fl >> 24) & 0xFF;
+      xbeePayload[29] = (sys__datastore.damperPots.data_fl >> 16) & 0xFF;
+      xbeePayload[30] = (sys__datastore.damperPots.data_fl >> 8) & 0xFF;    
+      xbeePayload[31] = sys__datastore.damperPots.data_fl & 0xFF;
+      xbeePayload[32] = (sys__datastore.damperPots.data_fr >> 24) & 0xFF;
+      xbeePayload[33] = (sys__datastore.damperPots.data_fr >> 16) & 0xFF;
+      xbeePayload[34] = (sys__datastore.damperPots.data_fr >> 8) & 0xFF;    
+      xbeePayload[35] = sys__datastore.damperPots.data_fr & 0xFF;
+      xbeePayload[36] = (sys__datastore.damperPots.data_rl >> 24) & 0xFF;
+      xbeePayload[37] = (sys__datastore.damperPots.data_rl >> 16) & 0xFF;
+      xbeePayload[38] = (sys__datastore.damperPots.data_rl >> 8) & 0xFF;    
+      xbeePayload[39] = sys__datastore.damperPots.data_rl & 0xFF;
+      xbeePayload[40] = (sys__datastore.damperPots.data_rr >> 24) & 0xFF;
+      xbeePayload[41] = (sys__datastore.damperPots.data_rr >> 16) & 0xFF;
+      xbeePayload[42] = (sys__datastore.damperPots.data_rr >> 8) & 0xFF;    
+      xbeePayload[43] = sys__datastore.damperPots.data_rr & 0xFF;
+
+      xbeePayload[44] = (sys__datastore.wheelSpeeds.data_fl >> 24) & 0xFF;
+      xbeePayload[45] = (sys__datastore.wheelSpeeds.data_fl >> 16) & 0xFF;
+      xbeePayload[46] = (sys__datastore.wheelSpeeds.data_fl >> 8) & 0xFF;    
+      xbeePayload[47] = sys__datastore.wheelSpeeds.data_fl & 0xFF;
+      xbeePayload[48] = (sys__datastore.wheelSpeeds.data_fr >> 24) & 0xFF;
+      xbeePayload[49] = (sys__datastore.wheelSpeeds.data_fr >> 16) & 0xFF;
+      xbeePayload[50] = (sys__datastore.wheelSpeeds.data_fr >> 8) & 0xFF;    
+      xbeePayload[51] = sys__datastore.wheelSpeeds.data_fr & 0xFF;
+      xbeePayload[52] = (sys__datastore.wheelSpeeds.data_rl >> 24) & 0xFF;
+      xbeePayload[53] = (sys__datastore.wheelSpeeds.data_rl >> 16) & 0xFF;
+      xbeePayload[54] = (sys__datastore.wheelSpeeds.data_rl >> 8) & 0xFF;    
+      xbeePayload[55] = sys__datastore.wheelSpeeds.data_rl & 0xFF;
+      xbeePayload[56] = (sys__datastore.wheelSpeeds.data_rr >> 24) & 0xFF;
+      xbeePayload[57] = (sys__datastore.wheelSpeeds.data_rr >> 16) & 0xFF;
+      xbeePayload[58] = (sys__datastore.wheelSpeeds.data_rr >> 8) & 0xFF;    
+      xbeePayload[59] = sys__datastore.wheelSpeeds.data_rr & 0xFF;
+
+      sys__datastore.accelerometers.hasReceivedXY_f = false;
+      sys__datastore.accelerometers.hasReceivedZ_f = false;
+      sys__datastore.accelerometers.hasReceived_r = false;
+      sys__datastore.damperPots.hasReceived_f = false;
+      sys__datastore.damperPots.hasReceived_r = false;
+      sys__datastore.wheelSpeeds.hasReceived_f = false;
+      sys__datastore.wheelSpeeds.hasReceived_r = false;
+
+      for (int i = 0; i < DEV__XBEE_FRAME_MISC_LENGTH; i++) 
+        Serial1.write(xbeePayload[i]);
+      Serial.print("XBEE Transmitting Misc Frame: ");
+      for (int i = 0; i < DEV__XBEE_FRAME_MISC_LENGTH; i++){
+        Serial.print(xbeePayload[i]);
+        Serial.print(" ");
+      }         
+      Serial.println();
+      break;     
+    }
   }
-
-  
-  /*
-  
-    SEND DATA TO XBEE  
-
-  */
 }
 /*----------------------------------------------------------------------------
   private functions
