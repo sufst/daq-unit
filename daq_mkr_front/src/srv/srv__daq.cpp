@@ -95,7 +95,7 @@ static dev__wheel__speed__obj_t dev__wheel__speeds__obj[SYS__MANAGER__WHEEL_SPEE
 * @return None
 * @note
 *****************************************************************************/
-void srv__daq__accelerometer_init(uint8_t *pins)
+void srv__daq__accelerometers_init(uint8_t *pins)
 {
     for (uint8_t i = 0; i < SYS__MANAGER__ACCELEROMETER_ATTACHED_AMT; i++)
     {

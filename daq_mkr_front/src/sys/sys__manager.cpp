@@ -69,7 +69,7 @@ void sys__manager__init()
     uint8_t accelerometerPins[SYS__MANAGER__ACCELEROMETER_ATTACHED_AMT] = {SYS__MANAGER__ACCELEROMETER_X_PIN,
                                                                              SYS__MANAGER__ACCELEROMETER_Y_PIN,
                                                                              SYS__MANAGER__ACCELEROMETER_Z_PIN};
-    srv__daq__accelerometer_init(accelerometerPins);
+    srv__daq__accelerometers_init(accelerometerPins);
 #endif // SYS__MANAGER__ACCELEROMETER_ENABLED 
   
 #if SYS__MANAGER__DAMPER_POTS_ENABLED

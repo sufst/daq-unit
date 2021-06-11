@@ -83,7 +83,8 @@ void srv__comms__can_init()
 void srv__comms__process(sys__datastore_t *dataStore)
 { 
     Serial.println("CAN TRANSMISSION:");
-    dev__can__mcp2515_tx(DEV__CAN__CMD_ACCELEROMETER, dataStore);
+    dev__can__mcp2515_tx(DEV__CAN__CMD_ACCELEROMETER_XY, dataStore);
+    dev__can__mcp2515_tx(DEV__CAN__CMD_ACCELEROMETER_Z, dataStore);
     dev__can__mcp2515_tx(DEV__CAN__CMD_DAMPER, dataStore);
     dev__can__mcp2515_tx(DEV__CAN__CMD_WHEEL_SPEED, dataStore);
     dev__can__mcp2515_tx(DEV__CAN__CMD_RIDE_HEIGHT, dataStore);
