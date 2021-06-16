@@ -16,7 +16,7 @@ Performs DAQ for front of the car and transmits MKR data over CAN
 #### DAQ
     * 2 damper pots, accelerometer and 2 wheel speeds 
 #### CAN Packet Structure:
-    || Accel X | Accel Y || Accel Z || Damper Pot Left[4] | Damper Pot Right[4] || Wheel Speed Left[4] | Wheel Speed Right[4] || Ride Height[4] |
+    || Accel X[4] | Accel Y[4] || Accel Z[4] || Damper Pot Left[4] | Damper Pot Right[4] || Wheel Speed Left[4] | Wheel Speed Right[4] || Ride Height[4] |
 
 ## Arduino MCP2515 CAN Interface Library Installation 
     1. Download the ZIP file from https://github.com/coryjfowler/MCP_CAN_lib
